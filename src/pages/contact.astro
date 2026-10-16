@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../lib/site.config';
+import { u } from '../lib/urls';
 
 const displayName = site.name.replace(/[\[\]]/g, '');
 const description = `Contact ${displayName} — ${site.title.replace(/[\[\]]/g, '')}. Email, social links and a contact form. Open to remote work.`;
@@ -55,7 +56,7 @@ const formspreeReady = site.formspreeId && site.formspreeId !== 'YOUR_FORM_ID';
           </li>
         </ul>
 
-        <a href={site.resumePath} download class="btn btn-secondary mt-8">
+        <a href={u(site.resumePath)} download class="btn btn-secondary mt-8">
           <Icon name="download" class="h-4 w-4" /> Download resume (PDF)
         </a>
       </div>
