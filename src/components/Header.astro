@@ -1,0 +1,124 @@
+---
+import { nav, site } from '../lib/site.config';
+import Icon from './Icon.astro';
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const norm = (href: string) => href.split('#')[0].replace(/\/+$/, '') || '/';
+const isActive = (href: string) => {
+  const target = norm(href);
+  return target === '/' ? path === '/' : path === target || path.startsWith(target + '/');
+};
+
+const initials = site.name
+  .replace(/[\[\]]/g, '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((w) => w[0])
+  .slice(0, 2)
+  .join('')
+  .toUpperCase();
+---
+
+<header
+  id="site-header"
+  class="fixed top-0 inset-x-0 z-50 border-b border-line bg-bg/80 backdrop-blur-md transition-shadow"
+  data-scroll-shadow
+>
+  <div class="container-site flex h-16 items-center justify-between gap-4">
+    <a href="/" class="flex items-center gap-2.5 font-semibold" aria-label={`${site.name} — home`}>
+      <span
+        class="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-accent to-accent-2 font-mono text-sm font-bold text-[var(--on-accent)]"
+        aria-hidden="true"
+      >
+        {initials || '>/<'}
+      </span>
+      <span class="hidden sm:block text-sm tracking-tight">{site.name.replace(/[\[\]]/g, '')}</span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              isActive(item.href) ? 'text-accent' : 'text-muted hover:text-fg',
+            ]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        data-theme-toggle
+        class="btn btn-ghost px-2.5 py-2.5"
+        aria-label="Toggle light / dark theme"
+      >
+        <Icon name="sun" class="h-5 w-5 dark:hidden" />
+        <Icon name="moon" class="hidden h-5 w-5 dark:block" />
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-ghost px-2.5 py-2.5 md:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-open
+      >
+        <Icon name="menu" class="h-5 w-5" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile drawer -->
+  <div
+    id="mobile-menu"
+    class="invisible fixed inset-0 z-50 md:hidden"
+    data-menu-panel
+    aria-hidden="true"
+  >
+    <div class="absolute inset-0 bg-black/50 opacity-0 transition-opacity" data-menu-overlay></div>
+    <nav
+      class="absolute top-0 right-0 h-full w-72 max-w-[85%] translate-x-full border-l border-line bg-surface p-6 shadow-2xl transition-transform duration-200"
+      aria-label="Mobile navigation"
+      data-menu-content
+    >
+      <div class="mb-6 flex items-center justify-between">
+        <span class="eyebrow">Menu</span>
+        <button type="button" class="btn btn-ghost px-2.5 py-2.5" aria-label="Close menu" data-menu-close>
+          <Icon name="x" class="h-5 w-5" />
+        </button>
+      </div>
+      <ul class="space-y-1">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  'block rounded-lg px-4 py-3 text-base font-medium',
+                  isActive(item.href) ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-surface-2 hover:text-fg',
+                ]}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                data-menu-link
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-8 border-t border-line pt-6">
+        <a href={`mailto:${site.email}`} class="flex items-center gap-2 px-4 py-2 text-sm text-muted">
+          <Icon name="mail" class="h-4 w-4" /> {site.email.replace(/[\[\]]/g, '')}
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>

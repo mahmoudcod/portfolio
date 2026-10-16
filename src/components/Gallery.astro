@@ -1,0 +1,174 @@
+---
+import BrowserFrame from './BrowserFrame.astro';
+import PhoneFrame from './PhoneFrame.astro';
+
+export interface GalleryImage {
+  src: { src: string; width?: number; height?: number };
+  alt: string;
+  caption?: string;
+  frame?: 'browser' | 'phone';
+}
+
+interface Props {
+  images: GalleryImage[];
+  projectTitle: string;
+}
+
+const { images, projectTitle } = Astro.props;
+const id = `lightbox-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+{
+  images.length > 0 && (
+    <section aria-label={`${projectTitle} screenshots`} data-gallery>
+      <div class="grid gap-6 sm:grid-cols-2">
+        {images.map((img, i) => (
+          <div class="flex flex-col gap-3">
+            <button
+              type="button"
+              class="group block cursor-zoom-in overflow-hidden rounded-xl focus-visible:outline-accent"
+              data-gallery-open={i}
+              aria-label={`Open screenshot ${i + 1} of ${images.length}: ${img.alt}`}
+            >
+              {img.frame === 'phone' ? (
+                <PhoneFrame>
+                  <img
+                    src={img.src.src}
+                    alt={img.alt}
+                    loading="lazy"
+                    decoding="async"
+                    class="aspect-[9/16] w-full object-cover"
+                    width={img.src.width}
+                    height={img.src.height}
+                  />
+                </PhoneFrame>
+              ) : (
+                <BrowserFrame>
+                  <img
+                    src={img.src.src}
+                    alt={img.alt}
+                    loading="lazy"
+                    decoding="async"
+                    class="aspect-[16/10] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    width={img.src.width}
+                    height={img.src.height}
+                  />
+                </BrowserFrame>
+              )}
+            </button>
+            {img.caption && <p class="text-center text-xs text-muted">{img.caption}</p>}
+          </div>
+        ))}
+      </div>
+
+      <!-- Lightbox -->
+      <dialog id={id} class="m-auto max-w-[92vw] max-h-[92vh] w-fit bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm" data-gallery-dialog>
+        <div class="relative" data-gallery-stage>
+          <img src="" alt="" class="max-h-[80vh] max-w-full rounded-lg bg-surface object-contain" data-gallery-img />
+          <p class="mt-3 text-center text-sm text-white/80" data-gallery-caption></p>
+          <p class="mt-1 text-center font-mono text-xs text-white/50" data-gallery-counter></p>
+        </div>
+        <button
+          type="button"
+          class="fixed top-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20"
+          data-gallery-close
+          aria-label="Close gallery"
+        >
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <button
+          type="button"
+          class="fixed top-1/2 left-4 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20"
+          data-gallery-prev
+          aria-label="Previous screenshot"
+        >
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button
+          type="button"
+          class="fixed top-1/2 right-4 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20"
+          data-gallery-next
+          aria-label="Next screenshot"
+        >
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+      </dialog>
+    </section>
+  )
+}
+
+<script>
+  import { u } from '../lib/urls';
+
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
+    const dialog = gallery.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
+    const img = gallery.querySelector<HTMLImageElement>('[data-gallery-img]');
+    const caption = gallery.querySelector<HTMLElement>('[data-gallery-caption]');
+    const counter = gallery.querySelector<HTMLElement>('[data-gallery-counter]');
+    const thumbs = [...gallery.querySelectorAll<HTMLImageElement>('[data-gallery-open] img')];
+    if (!dialog || !img || !caption || !counter || thumbs.length === 0) return;
+
+    const meta = thumbs.map((t) => ({ src: t.currentSrc || t.src, alt: t.alt }));
+    let index = 0;
+    let opener: HTMLElement | null = null;
+
+    // Full-size copies of each image for the lightbox stage.
+    const full = meta.map((m) => {
+      const i = new Image();
+      i.src = m.src;
+      return i;
+    });
+
+    function render() {
+      const m = meta[index];
+      img.src = full[index].src;
+      img.alt = m.alt;
+      caption.textContent = m.alt;
+      counter.textContent = `${index + 1} / ${meta.length}`;
+    }
+
+    function open(i: number, from: HTMLElement) {
+      opener = from;
+      index = i;
+      render();
+      dialog.showModal();
+    }
+
+    gallery.querySelectorAll<HTMLElement>('[data-gallery-open]').forEach((btn) => {
+      btn.addEventListener('click', () => open(Number(btn.dataset.galleryOpen), btn));
+    });
+
+    gallery.querySelector('[data-gallery-close]')?.addEventListener('click', () => dialog.close());
+    gallery.querySelector('[data-gallery-prev]')?.addEventListener('click', () => {
+      index = (index - 1 + meta.length) % meta.length;
+      render();
+    });
+    gallery.querySelector('[data-gallery-next]')?.addEventListener('click', () => {
+      index = (index + 1) % meta.length;
+      render();
+    });
+
+    // Click on the backdrop (outside the stage) closes.
+    dialog.addEventListener('click', (e) => {
+      const rect = dialog.querySelector('[data-gallery-stage]')?.getBoundingClientRect();
+      if (rect && (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom)) {
+        dialog.close();
+      }
+    });
+
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        index = (index - 1 + meta.length) % meta.length;
+        render();
+      } else if (e.key === 'ArrowRight') {
+        index = (index + 1) % meta.length;
+        render();
+      }
+    });
+
+    dialog.addEventListener('close', () => opener?.focus());
+  });
+
+  // u() is imported to keep base-path handling consistent if lightbox ever links out.
+  void u;
+</script>

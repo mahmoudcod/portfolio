@@ -1,0 +1,67 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 3916 >>
+stream
+BT 0.1 0.13 0.2 rg /F2 24 Tf 54 758 Td (Mahmoud Kamel) Tj ET
+BT 0.25 0.3 0.4 rg /F1 11 Tf 54 742 Td (Full-Stack Developer  Cairo, Egypt \(open to remote\)) Tj ET
+BT 0.3 0.35 0.45 rg /F1 9.5 Tf 54 728 Td (spop66009@gmail.com  ·  github.com/mahmoudcod  ·  linkedin.com/in/mahmoud-kamel-61bb16221) Tj ET
+0.06 0.71 0.83 RG 1.5 w 54 718 m 558 718 l S
+BT 0.02 0.45 0.56 rg /F2 10 Tf 54 696 Td (SUMMARY) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 682 Td (Full-stack developer building bilingual \(Arabic/English\) products end-to-end: desktop apps with Electron & Tauri,) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 669 Td (web platforms with Next.js & React, and Node.js/Express APIs with MongoDB, PostgreSQL and SQLite. I ship complete) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 656 Td (systems  UI, API, database and deployment  and design RTL-native interfaces rather than translating after the fact.) Tj ET
+BT 0.02 0.45 0.56 rg /F2 10 Tf 54 634 Td (SKILLS) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 620 Td (Frontend: React, Next.js, Vue, Nuxt, Tailwind CSS, RTL/i18n) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 607 Td (Desktop: Electron, Tauri, vanilla JavaScript) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 594 Td (Backend: Node.js, Express, Strapi, Prisma, NextAuth, JWT) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 581 Td (Data & Deploy: MongoDB, PostgreSQL, SQLite, Docker, Render, Cloudflare Pages, GitHub Actions) Tj ET
+BT 0.02 0.45 0.56 rg /F2 10 Tf 54 559 Td (SELECTED PROJECTS) Tj ET
+BT 0.1 0.13 0.2 rg /F2 10 Tf 54 545 Td (Moaz AIR  Warehouse Management System  ·  React · TypeScript · Express · MongoDB  ·  Live demo available) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 532 Td (Production warehouse platform \(inventory, clients, collections, accounting\) with role-based access and a) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 519 Td (full Arabic/English RTL interface. Deployed: React SPA on Cloudflare Pages, Dockerized API on Render.) Tj ET
+BT 0.1 0.13 0.2 rg /F2 10 Tf 54 504 Td (GLOW  Bilingual E-Commerce Platform  ·  Next.js 16 · Prisma · NextAuth · next-intl) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 491 Td (Complete EN/AR storefront plus admin panel: auth with email verification, reviews, wishlists, order) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 478 Td (management and dashboard analytics. PostgreSQL \(Neon\) with SQLite dev fallback; Netlify-ready.) Tj ET
+BT 0.1 0.13 0.2 rg /F2 10 Tf 54 463 Td (Hospital Operations Tracker  ·  Electron · SQLite · Arabic-first) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 450 Td (Offline-first desktop app for hospital staff: supplies intake, operation workflow, daily medications board,) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 437 Td (local accounts and print-ready reports. Full Arabic RTL UI built natively.) Tj ET
+BT 0.1 0.13 0.2 rg /F2 10 Tf 54 422 Td (Spider-Man Educational Word Game  ·  Vanilla JS · Web Audio API) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 409 Td (Kid-friendly word-learning game \(5 levels, villains, lives, scores\) with a teacher content dashboard. All) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 396 Td (sounds synthesized at runtime  zero dependencies, zero asset files.) Tj ET
+BT 0.02 0.45 0.56 rg /F2 10 Tf 54 374 Td (MORE WORK) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 360 Td (Mohtawa \(E-*HI\) content platform suite \(Next.js front, admin dashboard, Express/Mongo backend, hardened) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 347 Td (API variant\) · Ektesad platform \(Vue/Nuxt + Strapi CMS + Next.js dashboard\) · Money Board finance) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 334 Td (dashboard · Blog platform \(Strapi CMS + Next.js\) · Auth microservices \(Node + JWT\) · odysseus local-first) Tj ET
+BT 0.1 0.13 0.2 rg /F1 10 Tf 54 321 Td (AI assistant framework \(Python, Docker\) · ayadty clinic desktop app with licensing \(Tauri + SQLCipher\).) Tj ET
+BT 0.3 0.35 0.45 rg /F1 9 Tf 54 299 Td (More: github.com/mahmoudcod  22 public repositories, all projects above include source.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+4364
+%%EOF

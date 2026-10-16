@@ -1,0 +1,108 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BaseHead from '../components/BaseHead.astro';
+import { site } from '../lib/site.config';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const props = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" dir="ltr" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <BaseHead {...props} />
+    <script is:inline>
+      // Theme boot — runs before paint to avoid a flash. Dark is the default.
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var dark = stored ? stored === 'dark' : true;
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="flex min-h-screen flex-col" id="top">
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header />
+    <main id="main" class="flex-1 pt-16">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Theme toggle
+      document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const dark = document.documentElement.classList.toggle('dark');
+          try {
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+          } catch {}
+        });
+      });
+
+      // Mobile drawer
+      const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+      const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+      const content = panel?.querySelector<HTMLElement>('[data-menu-content]');
+      const overlay = panel?.querySelector<HTMLElement>('[data-menu-overlay]');
+
+      function setMenu(open: boolean) {
+        if (!panel || !openBtn || !content || !overlay) return;
+        panel.classList.toggle('invisible', !open);
+        panel.setAttribute('aria-hidden', String(!open));
+        openBtn.setAttribute('aria-expanded', String(open));
+        content.classList.toggle('translate-x-full', !open);
+        overlay.classList.toggle('opacity-0', !open);
+        document.body.style.overflow = open ? 'hidden' : '';
+        if (open) {
+          content.querySelector('a, button')?.focus();
+        } else {
+          openBtn.focus();
+        }
+      }
+
+      openBtn?.addEventListener('click', () => setMenu(true));
+      panel?.querySelector('[data-menu-close]')?.addEventListener('click', () => setMenu(false));
+      overlay?.addEventListener('click', () => setMenu(false));
+      panel?.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && panel && panel.getAttribute('aria-hidden') === 'false') setMenu(false);
+      });
+
+      // Sticky header shadow
+      const header = document.querySelector<HTMLElement>('[data-scroll-shadow]');
+      const onScroll = () => header?.classList.toggle('shadow-lg', window.scrollY > 8);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Reveal-on-scroll (subtle, respects reduced motion via CSS)
+      const revealables = document.querySelectorAll('[data-reveal]');
+      if (revealables.length) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+        revealables.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+---
+interface Props {
+  status: 'active' | 'maintained' | 'wip' | 'archived';
+}
+const { status } = Astro.props;
+const styles: Record<Props['status'], string> = {
+  active: 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+  maintained: 'text-sky-600 dark:text-sky-400 border-sky-500/30 bg-sky-500/10',
+  wip: 'text-amber-600 dark:text-amber-400 border-amber-500/30 bg-amber-500/10',
+  archived: 'text-muted border-line bg-surface-2',
+};
+const labels: Record<Props['status'], string> = {
+  active: 'Active',
+  maintained: 'Maintained',
+  wip: 'Work in progress',
+  archived: 'Archived',
+};
+---
+
+<span class:list={['inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium', styles[status]]}>
+  <span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true"></span>
+  {labels[status]}
+</span>

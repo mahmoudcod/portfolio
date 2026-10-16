@@ -1,0 +1,20 @@
+---
+interface Props {
+  tech: string[];
+  max?: number;
+}
+const { tech, max = tech.length } = Astro.props;
+const shown = tech.slice(0, max);
+const rest = tech.length - shown.length;
+---
+
+<ul class="flex flex-wrap gap-1.5" aria-label="Technologies used">
+  {
+    shown.map((t) => (
+      <li class="chip">
+        {t}
+      </li>
+    ))
+  }
+  {rest > 0 && <li class="chip">+{rest}</li>}
+</ul>

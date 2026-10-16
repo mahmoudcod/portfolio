@@ -1,0 +1,107 @@
+---
+import { u } from '../lib/urls';
+import { formatStars, formatMonthYear } from '../lib/format';
+import StatusPill from './StatusPill.astro';
+import TechBadges from './TechBadges.astro';
+import Icon from './Icon.astro';
+import type { Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  /** Eager-load the cover image (for above-the-fold cards). */
+  eager?: boolean;
+}
+
+const { project, eager = false } = Astro.props;
+const { data, repo } = project;
+const detailHref = u(`/projects/${project.slug}/`);
+const search = [data.title, data.summary, data.category, ...data.tech, ...(repo?.topics ?? [])].join(' ').toLowerCase();
+---
+
+<article
+  class="card card-hover group flex flex-col overflow-hidden"
+  data-project-card
+  data-title={data.title.toLowerCase()}
+  data-search={search}
+  data-category={data.category.toLowerCase()}
+  data-tech={data.tech.map((t) => t.toLowerCase()).join('|')}
+  data-stars={repo?.stargazers_count ?? 0}
+  data-date={repo?.pushed_at ?? data.date?.toISOString() ?? ''}
+  data-order={data.order}
+>
+  <a href={detailHref} class="relative block overflow-hidden" tabindex="-1" aria-hidden="true">
+    <img
+      src={project.cover.src}
+      alt=""
+      width={project.cover.width ?? 1200}
+      height={project.cover.height ?? 630}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      class="aspect-[16/9] w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+    />
+    <span class="absolute top-3 right-3 rounded-full bg-bg/80 px-2.5 py-1 font-mono text-[11px] text-muted backdrop-blur">
+      {data.category}
+    </span>
+  </a>
+
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <div class="flex items-center justify-between gap-2">
+      <StatusPill status={data.status} />
+      {
+        repo && (
+          <span class="flex items-center gap-3 font-mono text-xs text-muted">
+            <span class="flex items-center gap-1">
+              <Icon name="star" class="h-3.5 w-3.5" /> {formatStars(repo.stargazers_count)}
+            </span>
+            <span class="flex items-center gap-1">
+              <Icon name="fork" class="h-3.5 w-3.5" /> {formatStars(repo.forks_count)}
+            </span>
+          </span>
+        )
+      }
+    </div>
+
+    <h3 class="text-lg font-bold leading-snug">
+      <a href={detailHref} class="hover:text-accent transition-colors">
+        {data.title}
+      </a>
+    </h3>
+
+    <p class="text-sm text-muted line-clamp-2">{data.summary}</p>
+
+    <div class="mt-auto pt-2">
+      <TechBadges tech={data.tech} max={4} />
+    </div>
+
+    <div class="flex items-center justify-between gap-2 border-t border-line pt-4">
+      <a href={detailHref} class="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-strong">
+        Case study <Icon name="arrow-right" class="h-4 w-4" />
+      </a>
+      <div class="flex items-center gap-1">
+        {
+          project.demoUrl && (
+            <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" class="btn btn-ghost px-2.5 py-2 text-xs" aria-label={`${data.title} — live demo`}>
+              <Icon name="external" class="h-4 w-4" /> Demo
+            </a>
+          )
+        }
+        {
+          project.githubUrl && (
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="btn btn-ghost px-2.5 py-2 text-xs" aria-label={`${data.title} — GitHub repository`}>
+              <Icon name="github" class="h-4 w-4" /> Code
+            </a>
+          )
+        }
+      </div>
+    </div>
+
+    {
+      repo && (
+        <p class="flex items-center gap-1.5 font-mono text-[11px] text-muted">
+          <Icon name="clock" class="h-3 w-3" /> Updated {formatMonthYear(repo.pushed_at)}
+          {repo.language && <> · {repo.language}</>}
+        </p>
+      )
+    }
+  </div>
+</article>

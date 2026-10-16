@@ -1,0 +1,29 @@
+name: Cloudflare Pages — daily rebuild
+
+# Optional companion when hosting on Cloudflare Pages with its Git integration:
+# pushes deploy automatically, but GitHub stats only refresh on rebuild.
+# This pings your Cloudflare deploy hook daily to trigger one.
+#
+# Setup: Cloudflare dashboard → your Pages project → Settings → Builds & deployments
+# → Deploy hooks → create one, then add it as the CF_DEPLOY_HOOK secret
+# (repo Settings → Secrets and variables → Actions).
+
+on:
+  schedule:
+    - cron: '45 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare deploy hook
+        env:
+          HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "CF_DEPLOY_HOOK secret is not set — nothing to do. See .github/workflows/cloudflare-daily.yml for setup."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK"
+          echo "Deploy hook triggered."

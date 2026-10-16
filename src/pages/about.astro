@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Icon from '../components/Icon.astro';
+import { site, skills, timeline } from '../lib/site.config';
+import { u } from '../lib/urls';
+
+const displayName = site.name.replace(/[\[\]]/g, '');
+const description = `About ${displayName} — ${site.title.replace(/[\[\]]/g, '')} from ${site.location.replace(/[\[\]]/g, '')}. Skills, story and experience.`;
+---
+
+<BaseLayout title="About" description={description}>
+  <section class="py-14">
+    <div class="container-site">
+      <div class="grid items-start gap-10 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <div data-reveal>
+          <img
+            src={u('/avatar.svg')}
+            alt={`Portrait placeholder for ${displayName}`}
+            width="800"
+            height="800"
+            class="aspect-square w-full max-w-[320px] rounded-2xl border border-line object-cover shadow-xl"
+            loading="eager"
+            decoding="async"
+          />
+          <ul class="mt-6 space-y-2.5 font-mono text-sm text-muted">
+            <li class="flex items-center gap-2"><Icon name="map-pin" class="h-4 w-4 text-accent" /> {site.location}</li>
+            <li class="flex items-center gap-2">
+              <Icon name="github" class="h-4 w-4 text-accent" />
+              <a href={site.github} target="_blank" rel="noopener noreferrer" class="hover:text-accent">GitHub</a>
+            </li>
+            <li class="flex items-center gap-2">
+              <Icon name="linkedin" class="h-4 w-4 text-accent" />
+              <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="hover:text-accent">LinkedIn</a>
+            </li>
+            <li class="flex items-center gap-2">
+              <Icon name="mail" class="h-4 w-4 text-accent" />
+              <a href={`mailto:${site.email}`} class="hover:text-accent">Email</a>
+            </li>
+          </ul>
+        </div>
+
+        <div data-reveal>
+          <SectionHeading eyebrow="About" title={`Hey, I'm ${displayName}`} />
+          <div class="space-y-4 leading-relaxed text-muted">
+            <p class="text-lg text-fg">{site.bio}</p>
+            <p>
+              Most of my work serves Arabic-speaking users first: a hospital operations tracker running on clinic
+              machines, a bilingual e-commerce platform, an Arabic-first warehouse system in production, and an
+              educational game for kids — all built RTL-native, not translated as an afterthought. I ship complete
+              products: the UI, the API behind it, the database, and the deployment pipeline.
+            </p>
+            <p>
+              I work across the stack — React, Next.js and Vue on the web; Electron and Tauri on the desktop;
+              Node.js, Express and Strapi on the server; MongoDB, PostgreSQL and SQLite underneath. Lately I have
+              been hardening APIs for production (rate limiting, auth, backups) and deploying full systems to
+              Render and Cloudflare. Open to remote roles and freelance work.
+            </p>
+          </div>
+
+          <h2 class="mt-12 text-2xl font-bold tracking-tight">Skills by area</h2>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            {
+              skills.map((group) => (
+                <div class="card p-5">
+                  <h3 class="flex items-center gap-2 font-mono text-sm font-semibold text-accent">
+                    <Icon name="code" class="h-4 w-4" /> {group.area}
+                  </h3>
+                  <ul class="mt-3 flex flex-wrap gap-1.5">
+                    {group.items.map((item) => (
+                      <li class="chip">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+
+          {
+            timeline.length > 0 && (
+              <>
+                <h2 class="mt-12 text-2xl font-bold tracking-tight">Experience</h2>
+                <ol class="mt-6 space-y-0 border-l-2 border-line pl-6">
+                  {timeline.map((item) => (
+                    <li class="relative pb-8 last:pb-0">
+                      <span class="absolute top-1 -left-[31px] h-3.5 w-3.5 rounded-full border-2 border-accent bg-bg" aria-hidden="true" />
+                      <p class="font-mono text-xs text-accent">{item.period}</p>
+                      <h3 class="mt-1 font-semibold">
+                        {item.role} · <span class="text-muted">{item.org}</span>
+                      </h3>
+                      <p class="mt-1 text-sm text-muted">{item.note}</p>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            )
+          }
+
+          <a href={site.resumePath} download class="btn btn-primary mt-10">
+            <Icon name="download" class="h-4 w-4" /> Download resume (PDF)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import TechBadges from '../components/TechBadges.astro';
+import Icon from '../components/Icon.astro';
+import { getPortfolio, getFeatured } from '../lib/projects';
+import { site, skills } from '../lib/site.config';
+import { u } from '../lib/urls';
+
+const { projects } = await getPortfolio();
+const featured = getFeatured(projects);
+
+const displayName = site.name.replace(/[\[\]]/g, '');
+const jobTitle = site.title.replace(/[\[\]]/g, '');
+const description = `${site.tagline} ${displayName} — ${jobTitle} based in ${site.location.replace(/[\[\]]/g, '')}.`;
+---
+
+<BaseLayout title={`${displayName} — ${jobTitle}`} description={description} ogImage="/og/default.png">
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-line" id="hero">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute -top-32 right-0 h-96 w-96 rounded-full bg-accent/10 blur-3xl"></div>
+      <div class="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-accent-2/10 blur-3xl"></div>
+    </div>
+
+    <div class="container-site relative flex flex-col items-start gap-8 py-20 sm:py-28 lg:flex-row lg:items-center lg:justify-between">
+      <div class="max-w-2xl">
+        <p class="eyebrow" data-reveal>
+          <span class="font-mono">$</span> whoami
+        </p>
+        <h1 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl" data-reveal>
+          Hi, I'm <span class="text-gradient">{displayName}</span>.
+        </h1>
+        <p class="mt-4 text-xl font-semibold text-muted sm:text-2xl" data-reveal>{jobTitle}</p>
+        <p class="mt-4 max-w-xl text-lg text-muted" data-reveal>{site.tagline}</p>
+
+        <div class="mt-8 flex flex-wrap items-center gap-3" data-reveal>
+          <a href={u('/#projects')} class="btn btn-primary">
+            View projects <Icon name="arrow-right" class="h-4 w-4" />
+          </a>
+          <a href={u('/#contact')} class="btn btn-secondary">
+            Contact me
+          </a>
+        </div>
+
+        <ul class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-sm text-muted" data-reveal>
+          <li class="flex items-center gap-1.5"><Icon name="map-pin" class="h-4 w-4" /> {site.location}</li>
+          <li class="flex items-center gap-1.5">
+            <Icon name="github" class="h-4 w-4" />
+            <a href={site.github} target="_blank" rel="noopener noreferrer" class="hover:text-accent">GitHub</a>
+          </li>
+          <li class="flex items-center gap-1.5">
+            <Icon name="linkedin" class="h-4 w-4" />
+            <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="hover:text-accent">LinkedIn</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Terminal card -->
+      <div class="w-full max-w-md overflow-hidden rounded-xl border border-line bg-surface shadow-2xl" data-reveal>
+        <div class="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-2.5" aria-hidden="true">
+          <span class="h-2.5 w-2.5 rounded-full bg-red-400/80"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-amber-400/80"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-emerald-400/80"></span>
+          <span class="ml-2 font-mono text-xs text-muted">~/portfolio</span>
+        </div>
+        <pre class="overflow-x-auto p-5 font-mono text-[13px] leading-relaxed text-muted"><code><span class="text-accent">$</span> <span class="text-fg">node about-me.js</span>
+<span class="text-accent-2">{JSON.stringify({
+  role: jobTitle,
+  focus: ['web apps', 'AI tools', 'automation'],
+  openTo: 'remote work',
+}, null, 2)}</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured projects -->
+  <section class="py-20" id="projects">
+    <div class="container-site">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <SectionHeading eyebrow="Featured" title="Projects I'm proud of" description="Curated case studies — what I built, why, and what I learned." />
+        <a href={u('/projects/')} class="btn btn-secondary mb-10 shrink-0">
+          All projects <Icon name="arrow-right" class="h-4 w-4" />
+        </a>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2">
+        {featured.map((project, i) => <ProjectCard project={project} eager={i < 2} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="border-y border-line bg-surface py-20" id="skills">
+    <div class="container-site">
+      <SectionHeading eyebrow="Skills" title="Tools I reach for" align="center" />
+      <div class="mx-auto grid max-w-4xl gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal>
+        {
+          skills.map((group) => (
+            <div class="card p-5">
+              <h3 class="flex items-center gap-2 font-mono text-sm font-semibold text-accent">
+                <Icon name="code" class="h-4 w-4" /> {group.area}
+              </h3>
+              <ul class="mt-3 flex flex-wrap gap-1.5">
+                {group.items.map((item) => (
+                  <li class="chip">{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- About snippet -->
+  <section class="py-20" id="about">
+    <div class="container-site grid items-center gap-10 lg:grid-cols-2">
+      <div data-reveal>
+        <SectionHeading eyebrow="About" title="A little about me" />
+        <p class="text-lg leading-relaxed text-muted">
+          {site.bio}
+        </p>
+        <a href={u('/about/')} class="btn btn-ghost mt-6 -ml-4 text-accent">
+          More about me <Icon name="arrow-right" class="h-4 w-4" />
+        </a>
+      </div>
+      <div class="grid grid-cols-2 gap-4" data-reveal>
+        <div class="card p-6">
+          <p class="font-mono text-3xl font-bold text-gradient">{projects.length}</p>
+          <p class="mt-1 text-sm text-muted">in-depth case studies</p>
+        </div>
+        <div class="card p-6">
+          <p class="font-mono text-3xl font-bold text-gradient">100%</p>
+          <p class="mt-1 text-sm text-muted">static, fast & accessible</p>
+        </div>
+        <div class="card col-span-2 p-6">
+          <p class="text-sm font-semibold">Currently</p>
+          <p class="mt-1 text-sm text-muted">Open to remote roles and freelance work — let's talk.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="pb-20" id="contact">
+    <div class="container-site">
+      <div class="card relative overflow-hidden bg-linear-to-br from-accent/10 via-transparent to-accent-2/10 p-10 text-center sm:p-14" data-reveal>
+        <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl">Have a project in mind?</h2>
+        <p class="mx-auto mt-3 max-w-xl text-muted">
+          I'm open to remote work and interesting collaborations. The fastest way to reach me is email — I usually reply within a day.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <a href={`mailto:${site.email}`} class="btn btn-primary">
+            <Icon name="mail" class="h-4 w-4" /> Say hello
+          </a>
+          <a href={u('/contact/')} class="btn btn-secondary">Contact page</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
