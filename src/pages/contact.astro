@@ -1,56 +1,54 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeading from '../components/SectionHeading.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../lib/site.config';
 import { u } from '../lib/urls';
 
-const displayName = site.name.replace(/[\[\]]/g, '');
-const description = `Contact ${displayName} — ${site.title.replace(/[\[\]]/g, '')}. Email, social links and a contact form. Open to remote work.`;
+const description = `Contact ${site.name} — ${site.title}. Email, social links and a contact form. Open to remote work.`;
 const formspreeReady = site.formspreeId && site.formspreeId !== 'YOUR_FORM_ID';
 ---
 
 <BaseLayout title="Contact" description={description}>
-  <section class="py-14">
+  <section class="py-14 sm:py-20">
     <div class="container-site grid items-start gap-12 lg:grid-cols-2">
-      <div data-reveal>
-        <SectionHeading
-          eyebrow="Contact"
-          title="Let's work together"
-          description="Have a project, a role, or just a question? My inbox is open — I usually reply within a day."
-        />
+      <div>
+        <p class="font-arabic text-left text-lg text-accent" lang="ar" dir="rtl">تواصل</p>
+        <h1 class="font-display mt-1 text-4xl font-extrabold tracking-tight sm:text-6xl">Let's work together</h1>
+        <p class="mt-5 max-w-md text-lg text-muted">
+          Have a project, a role, or just a question? My inbox is open — I usually reply within a day.
+        </p>
 
-        <ul class="space-y-4">
+        <ul class="mt-10 space-y-4">
           <li>
-            <a href={`mailto:${site.email}`} class="card card-hover flex items-center gap-4 p-5">
-              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
+            <a href={`mailto:${site.email}`} class="flex items-center gap-4 border border-line p-5 transition-colors hover:border-accent">
+              <span class="grid h-11 w-11 shrink-0 place-items-center text-accent">
                 <Icon name="mail" class="h-5 w-5" />
               </span>
               <span>
                 <span class="block font-semibold">Email</span>
-                <span class="block font-mono text-sm text-muted">{site.email}</span>
+                <span class="block text-sm text-muted">{site.email}</span>
               </span>
             </a>
           </li>
           <li>
-            <a href={site.github} target="_blank" rel="noopener noreferrer" class="card card-hover flex items-center gap-4 p-5">
-              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
+            <a href={site.github} target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 border border-line p-5 transition-colors hover:border-accent">
+              <span class="grid h-11 w-11 shrink-0 place-items-center text-accent">
                 <Icon name="github" class="h-5 w-5" />
               </span>
               <span>
                 <span class="block font-semibold">GitHub</span>
-                <span class="block font-mono text-sm text-muted">github.com/{site.githubUsername}</span>
+                <span class="block text-sm text-muted">github.com/{site.githubUsername}</span>
               </span>
             </a>
           </li>
           <li>
-            <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="card card-hover flex items-center gap-4 p-5">
-              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
+            <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 border border-line p-5 transition-colors hover:border-accent">
+              <span class="grid h-11 w-11 shrink-0 place-items-center text-accent">
                 <Icon name="linkedin" class="h-5 w-5" />
               </span>
               <span>
                 <span class="block font-semibold">LinkedIn</span>
-                <span class="block font-mono text-sm text-muted">Connect with me</span>
+                <span class="block text-sm text-muted">Connect with me</span>
               </span>
             </a>
           </li>
@@ -61,7 +59,7 @@ const formspreeReady = site.formspreeId && site.formspreeId !== 'YOUR_FORM_ID';
         </a>
       </div>
 
-      <div class="card p-6 sm:p-8" data-reveal>
+      <div class="border border-line p-6 sm:p-8">
         {
           formspreeReady ? (
             <form action={`https://formspree.io/f/${site.formspreeId}`} method="POST" class="space-y-5">
@@ -73,7 +71,7 @@ const formspreeReady = site.formspreeId && site.formspreeId !== 'YOUR_FORM_ID';
                     name="name"
                     required
                     autocomplete="name"
-                    class="w-full rounded-lg border border-line bg-bg px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
+                    class="w-full rounded-md border border-line bg-bg px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
                   />
                 </label>
                 <label class="block">
@@ -83,7 +81,7 @@ const formspreeReady = site.formspreeId && site.formspreeId !== 'YOUR_FORM_ID';
                     name="email"
                     required
                     autocomplete="email"
-                    class="w-full rounded-lg border border-line bg-bg px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
+                    class="w-full rounded-md border border-line bg-bg px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
                   />
                 </label>
               </div>
@@ -93,7 +91,7 @@ const formspreeReady = site.formspreeId && site.formspreeId !== 'YOUR_FORM_ID';
                   name="message"
                   rows="6"
                   required
-                  class="w-full rounded-lg border border-line bg-bg px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
+                  class="w-full rounded-md border border-line bg-bg px-3.5 py-2.5 text-sm focus:border-accent focus:outline-none"
                 />
               </label>
               <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
@@ -103,15 +101,15 @@ const formspreeReady = site.formspreeId && site.formspreeId !== 'YOUR_FORM_ID';
             </form>
           ) : (
             <div class="space-y-4">
-              <h2 class="text-xl font-bold">The form needs one setup step</h2>
+              <h2 class="font-display text-2xl font-bold">The form needs one setup step</h2>
               <p class="text-sm leading-relaxed text-muted">
                 This form sends messages via <a href="https://formspree.io" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">Formspree</a>
                 (free tier is fine). To enable it:
               </p>
               <ol class="list-decimal space-y-2 pl-5 text-sm text-muted">
-                <li>Create a form at formspree.io and copy its id (looks like <code class="font-mono text-fg">xyzabcd</code>).</li>
+                <li>Create a form at formspree.io and copy its id (looks like <code class="rounded border border-line bg-surface-2 px-1 py-0.5">xyzabcd</code>).</li>
                 <li>
-                  Paste it into <code class="font-mono text-fg">src/lib/site.config.ts</code> → <code class="font-mono text-fg">formspreeId</code>.
+                  Paste it into <code class="rounded border border-line bg-surface-2 px-1 py-0.5">src/lib/site.config.ts</code> → <code class="rounded border border-line bg-surface-2 px-1 py-0.5">formspreeId</code>.
                 </li>
               </ol>
               <p class="text-sm text-muted">

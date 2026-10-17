@@ -1,19 +1,22 @@
 ---
 import { site } from '../lib/site.config';
 import Icon from './Icon.astro';
+import { u } from '../lib/urls';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-line bg-surface">
-  <div class="container-site flex flex-col items-center justify-between gap-4 py-10 sm:flex-row">
-    <p class="text-sm text-muted">
-      © {year}
-      {site.name.replace(/[\[\]]/g, '')}. Built with
-      <a href="https://astro.build" class="text-accent hover:underline" rel="noopener noreferrer" target="_blank">Astro</a>
-      + Tailwind CSS.
-    </p>
-    <ul class="flex items-center gap-2" aria-label="Social links">
+<footer class="border-t border-line">
+  <div class="container-site flex flex-col items-start justify-between gap-6 py-12 sm:flex-row sm:items-center">
+    <div>
+      <p class="font-display text-lg font-bold">{site.name}</p>
+      <p class="mt-1 text-sm text-muted">
+        © {year} · Built with
+        <a href="https://astro.build" class="hover:text-accent transition-colors" rel="noopener noreferrer" target="_blank">Astro</a>
+        and Tailwind CSS. Stats pulled live from the GitHub API.
+      </p>
+    </div>
+    <ul class="flex items-center gap-1" aria-label="Social links">
       <li>
         <a href={site.github} target="_blank" rel="noopener noreferrer" class="btn btn-ghost px-2.5 py-2.5" aria-label="GitHub profile">
           <Icon name="github" class="h-5 w-5" />
@@ -28,9 +31,6 @@ const year = new Date().getFullYear();
         <a href={`mailto:${site.email}`} class="btn btn-ghost px-2.5 py-2.5" aria-label="Send email">
           <Icon name="mail" class="h-5 w-5" />
         </a>
-      </li>
-      <li class="ml-2 hidden sm:block">
-        <a href="/#top" class="btn btn-secondary text-sm">Back to top</a>
       </li>
     </ul>
   </div>

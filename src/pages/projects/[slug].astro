@@ -26,9 +26,8 @@ const { data, repo } = project;
 const neighbors = getNeighbors(all, project.slug);
 const readmeHtml = await fetchReadmeHtml(data.repo, data.readme, data.privateRepo);
 
-const displayName = site.name.replace(/[\[\]]/g, '');
 const title = `${data.title} — case study`;
-const description = `${data.summary} A project by ${displayName}.`;
+const description = `${data.summary} A project by ${site.name}.`;
 ---
 
 <BaseLayout title={title} description={description} ogImage={`/og/projects/${project.slug}.png`} type="article">
@@ -36,25 +35,23 @@ const description = `${data.summary} A project by ${displayName}.`;
     <!-- Hero -->
     <header class="border-b border-line bg-surface">
       <div class="container-site py-12 sm:py-16">
-        <nav aria-label="Breadcrumb" class="mb-6 font-mono text-xs text-muted">
-          <a href={u('/projects/')} class="hover:text-accent">Projects</a>
-          <span aria-hidden="true"> / </span>
+        <p class="text-sm text-muted">
+          <a href={u('/projects')} class="hover:text-accent transition-colors">Project index</a>
+          <span aria-hidden="true"> — </span>
           <span class="text-fg">{data.title}</span>
-        </nav>
+        </p>
 
-        <div class="flex flex-wrap items-center gap-3">
-          <span class="chip">{data.category}</span>
+        <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted">
+          <span class="font-medium text-fg">{data.category}</span>
           <StatusPill status={data.status} />
           {
-            data.date && (
-              <span class="flex items-center gap-1.5 font-mono text-xs text-muted">
-                <Icon name="calendar" class="h-3.5 w-3.5" /> {formatDate(data.date)}
-              </span>
-            )
+            data.date && <span>{formatDate(data.date)}</span>
           }
         </div>
 
-        <h1 class="mt-4 max-w-3xl text-3xl font-extrabold tracking-tight sm:text-5xl">{data.title}</h1>
+        <h1 class="font-display mt-4 max-w-4xl text-[clamp(2.2rem,5.5vw,4.25rem)] font-extrabold leading-[1.02]">
+          {data.title}
+        </h1>
         <p class="mt-4 max-w-2xl text-lg text-muted">{data.summary}</p>
 
         <div class="mt-6 max-w-2xl">
@@ -65,14 +62,14 @@ const description = `${data.summary} A project by ${displayName}.`;
           {
             project.demoUrl && (
               <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                <Icon name="external" class="h-4 w-4" /> Live demo
+                <Icon name="external" class="h-4 w-4" /> Open the live demo
               </a>
             )
           }
           {
             project.githubUrl && (
               <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                <Icon name="github" class="h-4 w-4" /> View on GitHub
+                <Icon name="github" class="h-4 w-4" /> View source
               </a>
             )
           }
@@ -80,21 +77,11 @@ const description = `${data.summary} A project by ${displayName}.`;
 
         {
           repo && (
-            <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-sm text-muted">
-              <li class="flex items-center gap-1.5">
-                <Icon name="star" class="h-4 w-4" /> {formatStars(repo.stargazers_count)} stars
-              </li>
-              <li class="flex items-center gap-1.5">
-                <Icon name="fork" class="h-4 w-4" /> {formatStars(repo.forks_count)} forks
-              </li>
-              {repo.language && (
-                <li class="flex items-center gap-1.5">
-                  <span class="h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" /> {repo.language}
-                </li>
-              )}
-              <li class="flex items-center gap-1.5">
-                <Icon name="clock" class="h-4 w-4" /> Updated {formatDate(repo.pushed_at)}
-              </li>
+            <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-muted">
+              <li>{formatStars(repo.stargazers_count)} stars</li>
+              <li>{formatStars(repo.forks_count)} forks</li>
+              {repo.language && <li>{repo.language}</li>}
+              <li>Updated {formatDate(repo.pushed_at)}</li>
             </ul>
           )
         }
@@ -103,7 +90,7 @@ const description = `${data.summary} A project by ${displayName}.`;
 
     <div class="container-site py-12">
       <!-- Cover -->
-      <BrowserFrame url={project.demoUrl ? new URL(project.demoUrl).host : `${project.slug}.app`} class="-mt-2 mb-12">
+      <BrowserFrame url={project.demoUrl ? new URL(project.demoUrl).host : `${project.slug}.app`} class="-mt-2 mb-14">
         <img
           src={project.cover.src}
           alt={`${data.title} cover screenshot`}
@@ -121,7 +108,7 @@ const description = `${data.summary} A project by ${displayName}.`;
           {
             data.video && (
               <section aria-labelledby="demo-heading">
-                <h2 id="demo-heading" class="text-2xl font-bold tracking-tight">Demo</h2>
+                <h2 id="demo-heading" class="font-display text-2xl font-bold tracking-tight sm:text-3xl">Demo</h2>
                 <div class="mt-5">
                   <DemoVideo video={data.video} />
                 </div>
@@ -131,23 +118,18 @@ const description = `${data.summary} A project by ${displayName}.`;
 
           <!-- Overview -->
           <section aria-labelledby="overview-heading">
-            <h2 id="overview-heading" class="text-2xl font-bold tracking-tight">Overview</h2>
+            <h2 id="overview-heading" class="font-display text-2xl font-bold tracking-tight sm:text-3xl">Overview</h2>
             <p class="mt-4 leading-relaxed text-muted">{data.description}</p>
-            <div class="mt-6 grid gap-4">
+            <div class="mt-6 border-t border-line">
               {
                 [
-                  { label: 'Problem', text: data.overview.problem, icon: 'search' },
-                  { label: 'Solution', text: data.overview.solution, icon: 'wrench' },
-                  { label: 'Result', text: data.overview.result, icon: 'check' },
+                  { label: 'The problem', text: data.overview.problem },
+                  { label: 'What I built', text: data.overview.solution },
+                  { label: 'The result', text: data.overview.result },
                 ].map((row) => (
-                  <div class="card flex gap-4 p-5">
-                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
-                      <Icon name={row.icon} class="h-5 w-5" />
-                    </span>
-                    <div>
-                      <h3 class="font-mono text-xs font-semibold tracking-wider text-accent uppercase">{row.label}</h3>
-                      <p class="mt-1.5 text-sm leading-relaxed">{row.text}</p>
-                    </div>
+                  <div class="grid gap-1 border-b border-line py-5 sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-6">
+                    <h3 class="text-sm font-semibold text-accent">{row.label}</h3>
+                    <p class="text-sm leading-relaxed sm:text-[0.95rem]">{row.text}</p>
                   </div>
                 ))
               }
@@ -158,12 +140,12 @@ const description = `${data.summary} A project by ${displayName}.`;
           {
             data.features.length > 0 && (
               <section aria-labelledby="features-heading">
-                <h2 id="features-heading" class="text-2xl font-bold tracking-tight">Key features</h2>
-                <ul class="mt-5 grid gap-3 sm:grid-cols-2">
+                <h2 id="features-heading" class="font-display text-2xl font-bold tracking-tight sm:text-3xl">What it does</h2>
+                <ul class="mt-5 list-none border-t border-line">
                   {data.features.map((f) => (
-                    <li class="card flex items-start gap-3 p-4">
-                      <Icon name="check" class="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                      <span class="text-sm leading-relaxed">{f}</span>
+                    <li class="flex items-start gap-3 border-b border-line py-3.5 text-sm leading-relaxed sm:text-[0.95rem]">
+                      <span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                      {f}
                     </li>
                   ))}
                 </ul>
@@ -175,18 +157,15 @@ const description = `${data.summary} A project by ${displayName}.`;
           {
             data.howItWorks.length > 0 && (
               <section aria-labelledby="how-heading">
-                <h2 id="how-heading" class="text-2xl font-bold tracking-tight">How it works</h2>
-                <ol class="mt-6 space-y-0 border-l-2 border-line pl-6">
+                <h2 id="how-heading" class="font-display text-2xl font-bold tracking-tight sm:text-3xl">How it works</h2>
+                <ol class="mt-6 list-none border-t border-line">
                   {data.howItWorks.map((step, i) => (
-                    <li class="relative pb-8 last:pb-0">
-                      <span
-                        class="absolute top-0 -left-[35px] grid h-6 w-6 place-items-center rounded-full border border-accent bg-bg font-mono text-[11px] font-bold text-accent"
-                        aria-hidden="true"
-                      >
-                        {i + 1}
-                      </span>
-                      <h3 class="font-semibold">{step.title}</h3>
-                      <p class="mt-1 text-sm leading-relaxed text-muted">{step.description}</p>
+                    <li class="grid gap-1 border-b border-line py-5 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-4">
+                      <span class="font-display font-bold text-accent" aria-hidden="true">{i + 1}</span>
+                      <div>
+                        <h3 class="font-semibold">{step.title}</h3>
+                        <p class="mt-1 text-sm leading-relaxed text-muted">{step.description}</p>
+                      </div>
                     </li>
                   ))}
                 </ol>
@@ -198,24 +177,24 @@ const description = `${data.summary} A project by ${displayName}.`;
           {
             (data.challenges.length > 0 || data.lessons.length > 0) && (
               <section aria-labelledby="challenges-heading">
-                <h2 id="challenges-heading" class="text-2xl font-bold tracking-tight">Challenges & lessons</h2>
+                <h2 id="challenges-heading" class="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                  Challenges & lessons
+                </h2>
                 {data.challenges.length > 0 && (
                   <div class="mt-5 grid gap-4 sm:grid-cols-2">
                     {data.challenges.map((c) => (
-                      <div class="card p-5">
-                        <h3 class="flex items-start gap-2 text-sm font-semibold">
-                          <Icon name="wrench" class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" /> {c.challenge}
-                        </h3>
+                      <div class="border border-line p-5">
+                        <h3 class="text-sm font-semibold leading-snug">{c.challenge}</h3>
                         <p class="mt-2 text-sm leading-relaxed text-muted">{c.resolution}</p>
                       </div>
                     ))}
                   </div>
                 )}
                 {data.lessons.length > 0 && (
-                  <ul class="mt-4 space-y-2">
+                  <ul class="mt-5 list-none space-y-2.5">
                     {data.lessons.map((l) => (
-                      <li class="flex items-start gap-3 text-sm leading-relaxed">
-                        <Icon name="sparkles" class="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                      <li class="flex items-start gap-3 text-sm leading-relaxed sm:text-[0.95rem]">
+                        <span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
                         {l}
                       </li>
                     ))}
@@ -229,11 +208,11 @@ const description = `${data.summary} A project by ${displayName}.`;
           {
             readmeHtml && (
               <section aria-labelledby="readme-heading">
-                <h2 id="readme-heading" class="text-2xl font-bold tracking-tight">From the README</h2>
-                <p class="mt-2 font-mono text-xs text-muted">
-                  {data.privateRepo ? "From the project README." : <>Rendered from <span class="text-accent">{data.repo}</span> at build time.</>}
+                <h2 id="readme-heading" class="font-display text-2xl font-bold tracking-tight sm:text-3xl">From the README</h2>
+                <p class="mt-2 text-xs text-muted">
+                  {data.privateRepo ? 'From the project README.' : `Rendered from ${data.repo} at build time.`}
                 </p>
-                <div class="card readme mt-5 p-6" set:html={readmeHtml} />
+                <div class="readme mt-5 border border-line p-6" set:html={readmeHtml} />
               </section>
             )
           }
@@ -241,43 +220,51 @@ const description = `${data.summary} A project by ${displayName}.`;
 
         <!-- Sidebar -->
         <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start" aria-label="Project facts">
-          <div class="card p-5">
-            <h2 class="font-mono text-xs font-semibold tracking-wider text-muted uppercase">Tech stack</h2>
+          <div class="border border-line p-5">
+            <h2 class="text-sm font-semibold">Tech stack</h2>
             <div class="mt-3">
               <TechBadges tech={data.tech} />
             </div>
           </div>
           {
             repo?.topics && repo.topics.length > 0 && (
-              <div class="card p-5">
-                <h2 class="font-mono text-xs font-semibold tracking-wider text-muted uppercase">GitHub topics</h2>
+              <div class="border border-line p-5">
+                <h2 class="text-sm font-semibold">GitHub topics</h2>
                 <div class="mt-3 flex flex-wrap gap-1.5">
                   {repo.topics.slice(0, 10).map((t) => (
-                    <span class="chip">{t}</span>
+                    <span class="tag">{t}</span>
                   ))}
                 </div>
               </div>
             )
           }
-          <div class="card space-y-3 p-5">
-            <h2 class="font-mono text-xs font-semibold tracking-wider text-muted uppercase">Links</h2>
-            {
-              project.demoUrl && (
-                <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-sm text-accent hover:underline">
-                  <Icon name="external" class="h-4 w-4" /> Live demo
+          <div class="border border-line p-5">
+            <h2 class="text-sm font-semibold">Links</h2>
+            <ul class="mt-3 space-y-2 text-sm">
+              {
+                project.demoUrl && (
+                  <li>
+                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">
+                      Live demo
+                    </a>
+                  </li>
+                )
+              }
+              {
+                project.githubUrl && (
+                  <li>
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">
+                      Source code
+                    </a>
+                  </li>
+                )
+              }
+              <li>
+                <a href={`mailto:${site.email}?subject=Feedback on ${data.title}`} class="text-accent hover:underline">
+                  Send feedback
                 </a>
-              )
-            }
-            {
-              project.githubUrl && (
-                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-sm text-accent hover:underline">
-                  <Icon name="github" class="h-4 w-4" /> Source code
-                </a>
-              )
-            }
-            <a href={`mailto:${site.email}?subject=Feedback on ${data.title}`} class="flex items-center gap-2 text-sm text-accent hover:underline">
-              <Icon name="mail" class="h-4 w-4" /> Send feedback
-            </a>
+              </li>
+            </ul>
           </div>
         </aside>
       </div>
@@ -286,7 +273,7 @@ const description = `${data.summary} A project by ${displayName}.`;
       {
         data.gallery.length > 0 && (
           <div class="mt-14 border-t border-line pt-12">
-            <h2 class="text-2xl font-bold tracking-tight">Screenshots</h2>
+            <h2 class="font-display text-2xl font-bold tracking-tight sm:text-3xl">Screenshots</h2>
             <p class="mt-2 text-sm text-muted">Click any screenshot to open the lightbox. Desktop shots use a browser frame, mobile shots a phone frame.</p>
             <div class="mt-6">
               <Gallery images={project.gallery} projectTitle={data.title} />
@@ -299,11 +286,9 @@ const description = `${data.summary} A project by ${displayName}.`;
       <nav class="mt-14 grid gap-4 border-t border-line pt-10 sm:grid-cols-2" aria-label="Project navigation">
         {
           neighbors.prev ? (
-            <a href={u(`/projects/${neighbors.prev.slug}/`)} class="card card-hover group p-5">
-              <p class="flex items-center gap-1.5 font-mono text-xs text-muted">
-                <Icon name="arrow-left" class="h-3.5 w-3.5" /> Previous
-              </p>
-              <p class="mt-1.5 font-semibold group-hover:text-accent">{neighbors.prev.data.title}</p>
+            <a href={u(`/projects/${neighbors.prev.slug}`)} class="group border border-line p-5 transition-colors hover:border-accent">
+              <p class="text-xs text-muted">Previous</p>
+              <p class="font-display mt-1.5 font-bold group-hover:text-accent transition-colors">{neighbors.prev.data.title}</p>
             </a>
           ) : (
             <span />
@@ -311,11 +296,9 @@ const description = `${data.summary} A project by ${displayName}.`;
         }
         {
           neighbors.next && (
-            <a href={u(`/projects/${neighbors.next.slug}/`)} class="card card-hover group p-5 sm:text-right">
-              <p class="flex items-center justify-end gap-1.5 font-mono text-xs text-muted">
-                Next <Icon name="arrow-right" class="h-3.5 w-3.5" />
-              </p>
-              <p class="mt-1.5 font-semibold group-hover:text-accent">{neighbors.next.data.title}</p>
+            <a href={u(`/projects/${neighbors.next.slug}`)} class="group border border-line p-5 text-right transition-colors hover:border-accent">
+              <p class="text-xs text-muted">Next</p>
+              <p class="font-display mt-1.5 font-bold group-hover:text-accent transition-colors">{neighbors.next.data.title}</p>
             </a>
           )
         }

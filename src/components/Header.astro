@@ -17,7 +17,6 @@ const isActive = (href: string) => {
 };
 
 const initials = site.name
-  .replace(/[\[\]]/g, '')
   .split(/\s+/)
   .filter(Boolean)
   .map((w) => w[0])
@@ -28,18 +27,15 @@ const initials = site.name
 
 <header
   id="site-header"
-  class="fixed top-0 inset-x-0 z-50 border-b border-line bg-bg/80 backdrop-blur-md transition-shadow"
+  class="fixed top-0 inset-x-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md transition-shadow"
   data-scroll-shadow
 >
   <div class="container-site flex h-16 items-center justify-between gap-4">
-    <a href={u('/')} class="flex items-center gap-2.5 font-semibold" aria-label={`${site.name} — home`}>
-      <span
-        class="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-accent to-accent-2 font-mono text-sm font-bold text-[var(--on-accent)]"
-        aria-hidden="true"
-      >
-        {initials || '>/<'}
+    <a href={u('/')} class="group flex items-baseline gap-2" aria-label={`${site.name} — home`}>
+      <span class="font-display text-lg font-extrabold tracking-tight">{initials}</span>
+      <span class="hidden sm:block text-sm text-muted group-hover:text-fg transition-colors">
+        <span class="font-arabic" lang="ar" dir="rtl">محمود كامل</span>
       </span>
-      <span class="hidden sm:block text-sm tracking-tight">{site.name.replace(/[\[\]]/g, '')}</span>
     </a>
 
     <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
@@ -48,7 +44,7 @@ const initials = site.name
           <a
             href={u(item.href)}
             class:list={[
-              'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              'rounded-md px-3 py-2 text-sm font-medium transition-colors',
               isActive(item.href) ? 'text-accent' : 'text-muted hover:text-fg',
             ]}
             aria-current={isActive(item.href) ? 'page' : undefined}
@@ -59,7 +55,7 @@ const initials = site.name
       }
     </nav>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1">
       <button
         type="button"
         data-theme-toggle
@@ -86,7 +82,7 @@ const initials = site.name
   <!-- Mobile drawer -->
   <div
     id="mobile-menu"
-    class="invisible fixed inset-0 z-50 md:hidden"
+    class="invisible fixed inset-0 z-50 overflow-hidden md:hidden"
     data-menu-panel
     aria-hidden="true"
   >
@@ -97,7 +93,7 @@ const initials = site.name
       data-menu-content
     >
       <div class="mb-6 flex items-center justify-between">
-        <span class="eyebrow">Menu</span>
+        <span class="font-arabic text-sm text-muted" lang="ar" dir="rtl">القائمة</span>
         <button type="button" class="btn btn-ghost px-2.5 py-2.5" aria-label="Close menu" data-menu-close>
           <Icon name="x" class="h-5 w-5" />
         </button>
@@ -109,7 +105,7 @@ const initials = site.name
               <a
                 href={u(item.href)}
                 class:list={[
-                  'block rounded-lg px-4 py-3 text-base font-medium',
+                  'block rounded-md px-4 py-3 text-base font-medium',
                   isActive(item.href) ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-surface-2 hover:text-fg',
                 ]}
                 aria-current={isActive(item.href) ? 'page' : undefined}
@@ -123,7 +119,7 @@ const initials = site.name
       </ul>
       <div class="mt-8 border-t border-line pt-6">
         <a href={`mailto:${site.email}`} class="flex items-center gap-2 px-4 py-2 text-sm text-muted">
-          <Icon name="mail" class="h-4 w-4" /> {site.email.replace(/[\[\]]/g, '')}
+          <Icon name="mail" class="h-4 w-4" /> {site.email}
         </a>
       </div>
     </nav>

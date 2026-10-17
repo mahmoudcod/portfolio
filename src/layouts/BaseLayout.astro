@@ -86,23 +86,6 @@ const props = Astro.props;
       const onScroll = () => header?.classList.toggle('shadow-lg', window.scrollY > 8);
       onScroll();
       window.addEventListener('scroll', onScroll, { passive: true });
-
-      // Reveal-on-scroll (subtle, respects reduced motion via CSS)
-      const revealables = document.querySelectorAll('[data-reveal]');
-      if (revealables.length) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('revealed');
-                io.unobserve(entry.target);
-              }
-            }
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
-        );
-        revealables.forEach((el) => io.observe(el));
-      }
     </script>
   </body>
 </html>

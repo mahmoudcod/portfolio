@@ -43,29 +43,25 @@ export function buildOgSvg({ kicker, title, subtitle }: OgInput): string {
   const fontSize = lines.length <= 1 ? 68 : lines.length === 2 ? 56 : 46;
   const titleTop = 240 + (3 - lines.length) * fontSize * 0.55;
   const titleSvg = lines
-    .map((l, i) => `<text x="80" y="${titleTop + i * fontSize * 1.18}" font-size="${fontSize}" font-weight="800" fill="#e7ecf5" font-family="Helvetica, Arial, DejaVu Sans, sans-serif">${esc(l)}</text>`)
+    .map((l, i) => `<text x="80" y="${titleTop + i * fontSize * 1.18}" font-size="${fontSize}" font-weight="800" fill="#eaf2e9" font-family="Helvetica, Arial, DejaVu Sans, sans-serif">${esc(l)}</text>`)
     .join('');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
-    <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#22d3ee"/>
-      <stop offset="1" stop-color="#818cf8"/>
-    </linearGradient>
     <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.14"/>
-      <stop offset="1" stop-color="#818cf8" stop-opacity="0"/>
+      <stop offset="0" stop-color="#1a3a30" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#0c211d" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <rect width="${W}" height="${H}" fill="#080c16"/>
+  <rect width="${W}" height="${H}" fill="#0c211d"/>
   <rect width="${W}" height="${H}" fill="url(#glow)"/>
-  <circle cx="1120" cy="60" r="260" fill="#22d3ee" opacity="0.06"/>
-  <circle cx="80" cy="600" r="200" fill="#818cf8" opacity="0.06"/>
-  <rect x="80" y="150" width="200" height="5" rx="2.5" fill="url(#acc)"/>
-  <text x="80" y="120" font-size="26" letter-spacing="6" fill="#22d3ee" font-family="Helvetica, Arial, DejaVu Sans, sans-serif">${esc(kicker.toUpperCase())}</text>
+  <circle cx="1120" cy="70" r="260" fill="#e5b54b" opacity="0.05"/>
+  <circle cx="60" cy="610" r="200" fill="#e5b54b" opacity="0.04"/>
+  <rect x="80" y="150" width="200" height="5" rx="2.5" fill="#e5b54b"/>
+  <text x="80" y="120" font-size="26" letter-spacing="4" fill="#e5b54b" font-family="Helvetica, Arial, DejaVu Sans, sans-serif">${esc(kicker.toUpperCase())}</text>
   ${titleSvg}
-  <text x="80" y="540" font-size="30" fill="#9aa6bc" font-family="Helvetica, Arial, DejaVu Sans, sans-serif">${esc(subtitle)}</text>
-  <rect x="80" y="575" width="360" height="3" rx="1.5" fill="url(#acc)" opacity="0.5"/>
+  <text x="80" y="540" font-size="30" fill="#9db4a4" font-family="Helvetica, Arial, DejaVu Sans, sans-serif">${esc(subtitle)}</text>
+  <rect x="80" y="575" width="360" height="3" rx="1.5" fill="#e5b54b" opacity="0.6"/>
 </svg>`;
 }
 

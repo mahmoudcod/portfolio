@@ -5,12 +5,12 @@ import { u } from '../lib/urls';
 
 <BaseLayout title="Page not found" description="This page does not exist." noindex>
   <section class="container-site flex flex-col items-center py-28 text-center">
-    <p class="font-mono text-7xl font-extrabold text-gradient">404</p>
-    <h1 class="mt-4 text-2xl font-bold">This page wandered off the map</h1>
+    <p class="font-display text-7xl font-extrabold text-accent sm:text-8xl">404</p>
+    <h1 class="font-display mt-4 text-2xl font-bold sm:text-3xl">This page wandered off the index</h1>
     <p class="mt-2 max-w-md text-muted">The link may be broken, or the page may have moved. Let's get you back to solid ground.</p>
     <div class="mt-8 flex gap-3">
       <a href={u('/')} class="btn btn-primary">Back home</a>
-      <a href={u('/projects/')} class="btn btn-secondary">Browse projects</a>
+      <a href={u('/projects')} class="btn btn-secondary">Project index</a>
     </div>
   </section>
 </BaseLayout>

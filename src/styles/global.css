@@ -1,39 +1,42 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/instrument-sans';
+@import '@fontsource-variable/noto-kufi-arabic';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ---------------------------------------------------------------------------
-   Design tokens. Dark is the default theme; `.dark`/absence of it decides.
+   "The Cairo Index" — design tokens.
+   Petrol-green surfaces, a single brass accent, sage ink.
+   Dark is the default theme; `.dark` / absence of it decides.
 --------------------------------------------------------------------------- */
 :root {
-  --bg: #f6f7fb;
-  --surface: #ffffff;
-  --surface-2: #eef0f6;
-  --line: #e0e3ee;
-  --fg: #0c1222;
-  --muted: #5a6377;
-  --accent: #0e7490;
-  --accent-strong: #155e75;
-  --accent-2: #4f46e5;
-  --accent-soft: rgb(14 116 144 / 0.12);
-  --on-accent: #ffffff;
+  --bg: #efede4;            /* limestone */
+  --surface: #f7f5ee;
+  --surface-2: #e6e3d6;
+  --line: #d6d2c2;
+  --fg: #1a2b24;            /* spruce ink */
+  --muted: #5c6f63;
+  --accent: #7e5711;        /* deep brass (AA on limestone) */
+  --accent-strong: #5f4109;
+  --accent-ink: #fdf9ee;    /* text on brass fills */
+  --accent-soft: rgb(126 87 17 / 0.1);
+  --support: #25635a;       /* nile teal — status/secondary only */
   color-scheme: light;
 }
 
 .dark {
-  --bg: #080c16;
-  --surface: #0f1626;
-  --surface-2: #151d33;
-  --line: #233047;
-  --fg: #e7ecf5;
-  --muted: #9aa6bc;
-  --accent: #22d3ee;
-  --accent-strong: #67e8f9;
-  --accent-2: #818cf8;
-  --accent-soft: rgb(34 211 238 / 0.14);
-  --on-accent: #06121f;
+  --bg: #0c211d;            /* petrol night */
+  --surface: #112a25;
+  --surface-2: #16332c;
+  --line: #24453c;
+  --fg: #eaf2e9;            /* sage ink */
+  --muted: #9db4a4;
+  --accent: #e5b54b;        /* brass */
+  --accent-strong: #f0c768;
+  --accent-ink: #241a05;
+  --accent-soft: rgb(229 181 75 / 0.12);
+  --support: #8cc7b8;
   color-scheme: dark;
 }
 
@@ -46,10 +49,12 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
-  --color-accent-2: var(--accent-2);
+  --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-support: var(--support);
+  --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', var(--font-sans);
+  --font-arabic: 'Noto Kufi Arabic Variable', var(--font-sans);
 }
 
 /* ---------------------------------------------------------------------------
@@ -70,13 +75,13 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: var(--on-accent);
+  color: var(--accent-ink);
 }
 
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -98,20 +103,23 @@ body {
 .container-site {
   margin-inline: auto;
   width: 100%;
-  max-width: 72rem;
+  max-width: 76rem;
   padding-inline: 1.25rem;
 }
 @media (min-width: 640px) {
   .container-site {
-    padding-inline: 2rem;
+    padding-inline: 2.5rem;
   }
 }
 
-.text-gradient {
-  background: linear-gradient(100deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.font-display {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48;
+  letter-spacing: -0.02em;
+}
+
+.font-arabic {
+  font-family: var(--font-arabic);
 }
 
 .btn {
@@ -122,10 +130,10 @@ body {
   font-weight: 600;
   font-size: 0.925rem;
   line-height: 1;
-  padding: 0.7rem 1.15rem;
-  border-radius: 0.75rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 0.375rem;
   border: 1px solid transparent;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 .btn:hover {
   transform: translateY(-1px);
@@ -134,17 +142,20 @@ body {
   transform: translateY(0);
 }
 .btn-primary {
-  background: linear-gradient(100deg, var(--accent), var(--accent-2));
-  color: var(--on-accent);
-  box-shadow: 0 8px 24px -12px var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.btn-primary:hover {
+  background: var(--accent-strong);
 }
 .btn-secondary {
-  background: var(--surface);
+  background: transparent;
   border-color: var(--line);
   color: var(--fg);
 }
 .btn-secondary:hover {
   border-color: var(--accent);
+  color: var(--accent);
 }
 .btn-ghost {
   color: var(--fg);
@@ -155,38 +166,47 @@ body {
   background: var(--surface-2);
 }
 
-.card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+/* Editorial index rows (project lists) */
+.index-row {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: start;
+  border-top: 1px solid var(--line);
+  transition: background-color 0.2s ease;
 }
-.card-hover:hover {
-  border-color: var(--accent);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px -24px rgb(0 0 0 / 0.5);
+.index-row:last-of-type {
+  border-bottom: 1px solid var(--line);
+}
+.index-row:hover {
+  background: var(--surface);
+}
+.index-row:hover .index-title {
+  color: var(--accent);
+}
+.index-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 40;
+  letter-spacing: -0.015em;
+  transition: color 0.2s ease;
+}
+.index-num {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 24;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
-.chip {
+.tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  padding: 0.22rem 0.6rem;
-  border-radius: 9999px;
+  font-size: 0.78rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 0.25rem;
   background: var(--surface-2);
   border: 1px solid var(--line);
   color: var(--muted);
   white-space: nowrap;
-}
-
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
 }
 
 .skip-link {
@@ -198,11 +218,40 @@ body {
   border: 1px solid var(--accent);
   color: var(--fg);
   padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: 0.375rem;
   transition: top 0.15s ease;
 }
 .skip-link:focus {
   top: 1rem;
+}
+
+/* Floating hover preview for index rows (pointer:fine only, set in JS) */
+.work-preview {
+  position: fixed;
+  z-index: 40;
+  width: 22rem;
+  max-width: 40vw;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.96) rotate(-1.5deg);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -18px rgb(0 0 0 / 0.55);
+  background: var(--surface);
+}
+.work-preview.on {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1) rotate(-1.5deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-preview {
+    transform: translate(-50%, -50%);
+  }
+  .work-preview.on {
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -220,6 +269,7 @@ body {
 .readme h2,
 .readme h3,
 .readme h4 {
+  font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.3;
   margin: 1.6em 0 0.6em;
@@ -242,7 +292,7 @@ body {
 .readme ol { list-style: decimal; }
 .readme li { margin: 0.35em 0; }
 .readme code {
-  font-family: var(--font-mono);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.85em;
   background: var(--surface-2);
   border: 1px solid var(--line);
@@ -252,7 +302,7 @@ body {
 .readme pre {
   background: var(--surface-2);
   border: 1px solid var(--line);
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   padding: 1rem;
   overflow-x: auto;
   margin: 1em 0;
@@ -265,7 +315,7 @@ body {
   line-height: 1.6;
 }
 .readme img {
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--line);
   max-width: 100%;
   height: auto;
@@ -294,15 +344,24 @@ body {
   margin: 2em 0;
 }
 
-/* Reveal-on-scroll animation (opt-in via [data-reveal]) */
-@media (prefers-reduced-motion: no-preference) {
-  [data-reveal] {
+/* One orchestrated load moment: hero lines rise once. */
+@keyframes rise-in {
+  from {
     opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: translateY(18px);
   }
-  [data-reveal].revealed {
+  to {
     opacity: 1;
     transform: none;
   }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    opacity: 0;
+    animation: rise-in 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .rise-2 { animation-delay: 0.08s; }
+  .rise-3 { animation-delay: 0.16s; }
+  .rise-4 { animation-delay: 0.24s; }
+  .rise-5 { animation-delay: 0.32s; }
 }

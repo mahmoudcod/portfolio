@@ -11,10 +11,10 @@ const rest = tech.length - shown.length;
 <ul class="flex flex-wrap gap-1.5" aria-label="Technologies used">
   {
     shown.map((t) => (
-      <li class="chip">
+      <li class="tag">
         {t}
       </li>
     ))
   }
-  {rest > 0 && <li class="chip">+{rest}</li>}
+  {rest > 0 && <li class="tag">+{rest}</li>}
 </ul>
