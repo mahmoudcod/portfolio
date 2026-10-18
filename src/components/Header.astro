@@ -23,11 +23,36 @@ import { u } from '../lib/urls';
           {item.label}
         </a>
       ))}
+      <button
+        type="button"
+        class="hidden items-center gap-2 rounded-lg border border-line px-3 py-2 text-xs font-medium text-muted transition-colors hover:text-cyan md:flex"
+        data-motion-toggle
+        aria-pressed="false"
+        title="Play or pause the site's animations"
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M1 4h14M3 8h10M5 12h6"></path>
+        </svg>
+        <span data-motion-label>Motion</span>
+      </button>
       <a href={`mailto:${site.email}`} class="btn btn-primary !px-4 !py-2 text-sm">Hire me</a>
     </nav>
 
-    <!-- Mobile toggle -->
-    <button
+    <!-- Mobile controls -->
+    <div class="flex items-center gap-2 md:hidden">
+      <button
+        type="button"
+        class="grid size-10 place-items-center rounded-lg border border-line bg-panel"
+        data-motion-toggle
+        aria-pressed="false"
+        aria-label="Toggle animations"
+        title="Play or pause the site's animations"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M1 4h14M3 8h10M5 12h6"></path>
+        </svg>
+      </button>
+      <button
       type="button"
       class="grid size-10 place-items-center rounded-lg border border-line bg-panel md:hidden"
       data-menu-open
@@ -38,7 +63,8 @@ import { u } from '../lib/urls';
       <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true">
         <path d="M1 1h16M1 7h16M1 13h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
       </svg>
-    </button>
+      </button>
+    </div>
   </div>
 
   <!-- Mobile drawer -->
@@ -78,6 +104,30 @@ import { u } from '../lib/urls';
 </header>
 
 <script>
+  // Motion toggle — an explicit site override of the OS reduced-motion
+  // preference. Persisted, then reloaded so the hero and reveals re-init
+  // under the new choice.
+  const motionButtons = document.querySelectorAll<HTMLButtonElement>('[data-motion-toggle]');
+  function reflectMotion() {
+    const on = document.documentElement.dataset.motion === 'on';
+    motionButtons.forEach((btn) => {
+      btn.setAttribute('aria-pressed', String(on));
+      const label = btn.querySelector<HTMLElement>('[data-motion-label]');
+      if (label) label.textContent = on ? 'Motion: on' : 'Motion: off';
+    });
+  }
+  reflectMotion();
+  motionButtons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const next = document.documentElement.dataset.motion === 'on' ? 'off' : 'on';
+      try {
+        localStorage.setItem('site-motion', next);
+      } catch {}
+      document.documentElement.dataset.motion = next;
+      window.location.reload();
+    })
+  );
+
   // Scrolled state — glass backdrop
   const header = document.querySelector<HTMLElement>('[data-header]');
   const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 10);

@@ -93,7 +93,7 @@ import { u } from '../lib/urls';
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .rise {
+    html:not([data-motion='on']) .rise {
       animation: none;
     }
   }
@@ -111,11 +111,14 @@ import { u } from '../lib/urls';
 </style>
 
 <script>
+  import { motionDisabled } from '../lib/motion';
+
   /**
    * Hero particle galaxy — bundled three.js (code-split, loaded async),
    * pointer-reactive. Degrades to the static CSS starfield if WebGL fails,
-   * renders a single static frame under prefers-reduced-motion, and pauses
-   * when off-screen.
+   * renders a single static frame under the effective reduced-motion
+   * preference (OS setting, unless overridden by the site's Motion toggle),
+   * and pauses when off-screen.
    */
   const stage = document.querySelector<HTMLElement>('[data-hero-stage]');
   const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
@@ -133,7 +136,7 @@ import { u } from '../lib/urls';
 
   async function init(THREE: typeof import('three')) {
     if (!canvas || !stage) return;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedMotion = motionDisabled();
 
     // Opaque buffer (alpha:false) — additive particles keep full brightness in
     // every compositor; the scene paints the void background itself.

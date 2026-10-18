@@ -19,6 +19,20 @@ const props = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <BaseHead {...props} />
+    <!-- Resolve the motion preference before first paint: an explicit site
+         override ("site-motion" in localStorage, set by the header toggle)
+         beats the OS prefers-reduced-motion setting. -->
+    <script is:inline>
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem('site-motion');
+        } catch (e) {}
+        var osReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        document.documentElement.dataset.motion =
+          stored === 'on' || stored === 'off' ? stored : osReduce ? 'off' : 'on';
+      })();
+    </script>
   </head>
   <body class="flex min-h-screen flex-col" id="top">
     <a href="#main" class="skip-link">Skip to content</a>
@@ -71,9 +85,10 @@ const props = Astro.props;
     </div>
 
     <script>
+      import { motionDisabled } from '../lib/motion';
       // --- Scroll-driven reveals ------------------------------------------------
       const revealables = document.querySelectorAll<HTMLElement>('[data-reveal]');
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      if (motionDisabled() || !('IntersectionObserver' in window)) {
         revealables.forEach((el) => el.classList.add('is-in'));
       } else {
         const io = new IntersectionObserver(

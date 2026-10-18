@@ -87,16 +87,21 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
+  html:not([data-motion='on']) {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  html:not([data-motion='on']) *,
+  html:not([data-motion='on']) *::before,
+  html:not([data-motion='on']) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Explicit "Motion: on" override — re-enable the motion-reduce-muted ping dot. */
+html[data-motion='on'] .motion-reduce\:animate-none {
+  animation: ping 1.2s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 /* ---------------------------------------------------------------------------
@@ -243,7 +248,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
+  html:not([data-motion='on']) [data-reveal] {
     opacity: 1;
     transform: none;
     filter: none;
