@@ -1,22 +1,18 @@
 ---
 import { site } from '../lib/site.config';
 import { u } from '../lib/urls';
-import { buildOgSvg, renderOgPng } from '../lib/og';
 
 interface Props {
   title: string;
   description: string;
-  /** Path to a pre-generated OG image (e.g. /og/projects/taskflow.png). */
-  ogImage?: string;
   type?: 'website' | 'article';
   noindex?: boolean;
 }
 
-const { title, description, ogImage = '/og/default.png', type = 'website', noindex = false } = Astro.props;
+const { title, description, type = 'website', noindex = false } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const ogImageUrl = new URL(u(ogImage), Astro.site);
-const fullTitle = title.includes(site.name.replace(/[\[\]]/g, '')) ? title : `${title} · ${site.name.replace(/[\[\]]/g, '')}`;
+const fullTitle = title.includes(site.name) ? title : `${title} · ${site.name}`;
 ---
 
 <!-- Primary meta -->
@@ -25,40 +21,35 @@ const fullTitle = title.includes(site.name.replace(/[\[\]]/g, '')) ? title : `${
 <link rel="canonical" href={canonical} />
 {noindex && <meta name="robots" content="noindex" />}
 <meta name="generator" content={Astro.generator} />
-<meta name="author" content={site.name.replace(/[\[\]]/g, '')} />
-<meta name="theme-color" content="#0c211d" media="(prefers-color-scheme: dark)" />
-<meta name="theme-color" content="#efede4" media="(prefers-color-scheme: light)" />
+<meta name="author" content={site.name} />
+<meta name="theme-color" content="#04050e" />
 
 <!-- Favicon -->
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/svg+xml" href={u('/favicon.svg')} />
 
 <!-- Open Graph -->
 <meta property="og:type" content={type} />
-<meta property="og:site_name" content={site.name.replace(/[\[\]]/g, '')} />
+<meta property="og:site_name" content={site.name} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
-<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image" content={new URL(u('/og/default.png'), Astro.site)} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:locale" content="en_US" />
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={fullTitle} />
-<meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={ogImageUrl} />
-
 <!-- JSON-LD: Person -->
-<script type="application/ld+json" set:html={JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: site.name.replace(/[\[\]]/g, ''),
-  jobTitle: site.title.replace(/[\[\]]/g, ''),
-  description: site.bio.replace(/[\[\]]/g, ''),
-  url: String(canonical),
-  email: `mailto:${site.email.replace(/[\[\]]/g, '')}`,
-  sameAs: [site.github.replace(/[\[\]]/g, ''), site.linkedin.replace(/[\[\]]/g, '')],
-  address: { '@type': 'PostalAddress', addressCountry: 'EG' },
-})} />
-
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: site.name,
+    jobTitle: site.title,
+    description: site.bio,
+    url: String(canonical),
+    email: `mailto:${site.email}`,
+    sameAs: [site.github, site.linkedin],
+    address: { '@type': 'PostalAddress', addressLocality: 'Cairo', addressCountry: 'EG' },
+  })}
+/>

@@ -1,37 +1,22 @@
 ---
 import { site } from '../lib/site.config';
-import Icon from './Icon.astro';
 import { u } from '../lib/urls';
-
 const year = new Date().getFullYear();
 ---
 
 <footer class="border-t border-line">
-  <div class="container-site flex flex-col items-start justify-between gap-6 py-12 sm:flex-row sm:items-center">
+  <div class="container-site flex flex-col items-center gap-6 py-10 text-center sm:flex-row sm:justify-between sm:text-start">
     <div>
-      <p class="font-display text-lg font-bold">{site.name}</p>
+      <p class="font-arabic text-left text-lg text-cyan" lang="ar" dir="rtl" aria-hidden="true">{site.nameAr}</p>
       <p class="mt-1 text-sm text-muted">
-        © {year} · Built with
-        <a href="https://astro.build" class="hover:text-accent transition-colors" rel="noopener noreferrer" target="_blank">Astro</a>
-        and Tailwind CSS. Stats pulled live from the GitHub API.
+        © {year} {site.name} · {site.location} · {site.availability}
       </p>
     </div>
-    <ul class="flex items-center gap-1" aria-label="Social links">
-      <li>
-        <a href={site.github} target="_blank" rel="noopener noreferrer" class="btn btn-ghost px-2.5 py-2.5" aria-label="GitHub profile">
-          <Icon name="github" class="h-5 w-5" />
-        </a>
-      </li>
-      <li>
-        <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="btn btn-ghost px-2.5 py-2.5" aria-label="LinkedIn profile">
-          <Icon name="linkedin" class="h-5 w-5" />
-        </a>
-      </li>
-      <li>
-        <a href={`mailto:${site.email}`} class="btn btn-ghost px-2.5 py-2.5" aria-label="Send email">
-          <Icon name="mail" class="h-5 w-5" />
-        </a>
-      </li>
-    </ul>
+    <nav class="flex items-center gap-5 text-sm" aria-label="Social">
+      <a href={site.github} target="_blank" rel="noopener noreferrer" class="nav-link">GitHub</a>
+      <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="nav-link">LinkedIn</a>
+      <a href={u(site.resumePath)} class="nav-link">Résumé</a>
+      <a href={`mailto:${site.email}`} class="nav-link">Email</a>
+    </nav>
   </div>
 </footer>

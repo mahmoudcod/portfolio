@@ -1,0 +1,35 @@
+---
+import { marquee } from '../lib/site.config';
+
+// Two interleaved halves so the rows scroll in opposite directions.
+const rowA = marquee.filter((_, i) => i % 2 === 0);
+const rowB = marquee.filter((_, i) => i % 2 === 1);
+---
+
+<div id="stack" class="border-y border-line bg-deep/60 py-12 sm:py-16" aria-label="Technologies I work with" data-reveal>
+  <div class="container-site mb-8 flex flex-wrap items-baseline justify-between gap-3">
+    <h2 class="font-display text-2xl font-semibold sm:text-3xl">The stack</h2>
+    <p class="font-arabic text-left text-lg text-cyan" lang="ar" dir="rtl" aria-hidden="true">الأدوات</p>
+  </div>
+
+  <div class="flex flex-col gap-4">
+    <div class="marquee" data-direction="left" style="--marquee-duration: 52s" tabindex="-1">
+      <div class="marquee-track">
+        {[0, 1].map((copy) => (
+          <div class="flex" aria-hidden={copy === 1}>
+            {rowA.map((item) => <span class="marquee-item">{item}</span>)}
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="marquee" data-direction="right" style="--marquee-duration: 58s" tabindex="-1">
+      <div class="marquee-track">
+        {[0, 1].map((copy) => (
+          <div class="flex" aria-hidden={copy === 1}>
+            {rowB.map((item) => <span class="marquee-item">{item}</span>)}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>

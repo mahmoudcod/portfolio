@@ -1,0 +1,369 @@
+---
+import { site } from '../lib/site.config';
+import { u } from '../lib/urls';
+---
+
+<section id="top" class="relative flex min-h-[100svh] flex-col justify-center overflow-hidden" aria-label="Introduction">
+  <!-- WebGL starfield (falls back to .star-fallback dots when WebGL is unavailable) -->
+  <div class="absolute inset-0" data-hero-stage aria-hidden="true">
+    <div class="star-fallback" data-star-fallback></div>
+    <canvas class="hero-canvas" data-hero-canvas></canvas>
+  </div>
+
+  <!-- Neon grid horizon -->
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[46vh] overflow-hidden" aria-hidden="true">
+    <div class="grid-horizon"></div>
+    <div class="horizon-bloom"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-void to-transparent"></div>
+  </div>
+
+  <!-- Left scrim: keeps copy legible over the galaxy -->
+  <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-void/90 via-void/25 to-transparent" aria-hidden="true"></div>
+
+  <!-- Copy -->
+  <div class="container-site relative z-10 pb-28 pt-28 sm:pb-36">
+    <p
+      class="font-arabic rise text-left text-2xl text-cyan glow-cyan sm:text-3xl"
+      lang="ar"
+      dir="rtl"
+      data-reveal
+      aria-hidden="true"
+    >
+      {site.nameAr}
+    </p>
+    <h1
+      class="rise font-display mt-4 max-w-5xl text-[clamp(2rem,6vw,4.6rem)] font-bold leading-[1.06]"
+      data-reveal
+      style="--reveal-delay: 90ms"
+    >
+      {site.headline}
+    </h1>
+    <p
+      class="rise mt-6 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl"
+      data-reveal
+      style="--reveal-delay: 180ms"
+    >
+      {site.tagline}
+    </p>
+
+    <div class="rise mt-9 flex flex-wrap items-center gap-3" data-reveal style="--reveal-delay: 270ms">
+      <a href={u('/#work')} class="btn btn-primary">Watch the work</a>
+      <a href={`mailto:${site.email}`} class="btn btn-ghost">Get in touch</a>
+    </div>
+
+    <div class="rise mt-12 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted" data-reveal style="--reveal-delay: 360ms">
+      <span class="inline-flex items-center gap-2">
+        <span class="relative flex size-2" aria-hidden="true">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60 motion-reduce:animate-none"></span>
+          <span class="relative inline-flex size-2 rounded-full bg-cyan"></span>
+        </span>
+        {site.location}
+      </span>
+      <span>{site.availability}</span>
+      <span class="flex gap-4">
+        <a href={site.github} target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-cyan">GitHub</a>
+        <a href={site.linkedin} target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-cyan">LinkedIn</a>
+      </span>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="pointer-events-none absolute inset-x-0 bottom-6 z-10 hidden justify-center sm:flex" aria-hidden="true">
+    <div class="h-10 w-px overflow-hidden bg-line">
+      <div class="h-4 w-px animate-scroll-hint bg-cyan"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .rise {
+    animation: rise-in 0.9s cubic-bezier(0.22, 0.8, 0.26, 1) both;
+    animation-delay: calc(var(--reveal-delay, 0ms) + 80ms);
+  }
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
+      filter: blur(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rise {
+      animation: none;
+    }
+  }
+  .animate-scroll-hint {
+    animation: scroll-hint 1.8s ease-in-out infinite;
+  }
+  @keyframes scroll-hint {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(250%);
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Hero particle galaxy — bundled three.js (code-split, loaded async),
+   * pointer-reactive. Degrades to the static CSS starfield if WebGL fails,
+   * renders a single static frame under prefers-reduced-motion, and pauses
+   * when off-screen.
+   */
+  const stage = document.querySelector<HTMLElement>('[data-hero-stage]');
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+  if (stage && canvas && !canvas.dataset.bound) {
+    canvas.dataset.bound = 'true';
+    import('three')
+      .then((THREE) => init(THREE))
+      .catch((err) => {
+        // Module or WebGL/context failure: hide the canvas, the CSS starfield stays visible.
+        canvas.style.display = 'none';
+        stage.dataset.heroError = 'true';
+        if (import.meta.env.DEV) console.warn('Hero WebGL disabled:', err);
+      });
+  }
+
+  async function init(THREE: typeof import('three')) {
+    if (!canvas || !stage) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Opaque buffer (alpha:false) — additive particles keep full brightness in
+    // every compositor; the scene paints the void background itself.
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: false, powerPreference: 'high-performance' });
+    renderer.setClearColor(0x04050e, 1);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 400);
+    camera.position.set(0, 10, 33);
+
+    // Soft round particle sprite drawn once on an offscreen canvas
+    const sprite = makeSprite();
+
+    // --- Main galaxy: a flattened spiral disc -------------------------------
+    const galaxy = makeGalaxy({ count: 2600, radius: 23, thickness: 2.2, size: 0.55, armTwist: 4.4, inside: '#3ee6ff', outside: '#9d7bff' });
+    scene.add(galaxy.points);
+
+    // --- Soft nebula sprites for glowing depth -------------------------------
+    const nebula = makeNebula();
+    scene.add(nebula.points);
+
+    // --- Bright hero stars for sparkle ---------------------------------------
+    const bright = makeGalaxy({ count: 110, radius: 27, thickness: 7, size: 1.5, armTwist: 5, inside: '#bff4ff', outside: '#cdb6ff' });
+    scene.add(bright.points);
+
+    // --- Far dust shell for depth -------------------------------------------
+    const dust = makeGalaxy({ count: 1200, radius: 90, thickness: 60, size: 0.6, armTwist: 0, inside: '#8ea0ff', outside: '#e9edff', spread: 'sphere' });
+    scene.add(dust.points);
+
+    function makeNebula(): { points: THREE.Points } {
+      const count = 9;
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      const hues = ['#3ee6ff', '#9d7bff', '#2563eb'];
+      for (let i = 0; i < count; i++) {
+        const r = 4 + Math.random() * 20;
+        const a = Math.random() * Math.PI * 2;
+        positions.set([Math.cos(a) * r, (Math.random() - 0.5) * 4, Math.sin(a) * r], i * 3);
+        const c = new THREE.Color(hues[i % hues.length]);
+        colors.set([c.r, c.g, c.b], i * 3);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({
+        size: 16,
+        map: sprite,
+        vertexColors: true,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true,
+        opacity: 0.05,
+      });
+      return { points: new THREE.Points(geo, mat) };
+    }
+
+    function makeSprite(): THREE.Texture {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const g = c.getContext('2d')!;
+      const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grad.addColorStop(0, 'rgba(255,255,255,1)');
+      grad.addColorStop(0.35, 'rgba(255,255,255,0.55)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = grad;
+      g.fillRect(0, 0, 64, 64);
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function makeGalaxy(opts: {
+      count: number;
+      radius: number;
+      thickness: number;
+      size: number;
+      armTwist: number;
+      inside: string;
+      outside: string;
+      spread?: 'disc' | 'sphere';
+    }): { points: THREE.Points } {
+      const { count, radius, thickness, size, armTwist, inside, outside, spread = 'disc' } = opts;
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      const cIn = new THREE.Color(inside);
+      const cOut = new THREE.Color(outside);
+      const cWhite = new THREE.Color('#e9edff');
+
+      for (let i = 0; i < count; i++) {
+        const r = Math.random() ** 1.6 * radius;
+        const branch = spread === 'disc' ? ((i % 3) / 3) * Math.PI * 2 : Math.random() * Math.PI * 2;
+        const spin = spread === 'disc' ? r * (armTwist / radius) : 0;
+        const scatter = spread === 'disc' ? (Math.random() - 0.5) * (Math.random() - 0.5) * 6 : 0;
+
+        let x: number, y: number, z: number;
+        if (spread === 'sphere') {
+          // random point on a spherical shell
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(2 * Math.random() - 1);
+          x = r * Math.sin(phi) * Math.cos(theta);
+          z = r * Math.sin(phi) * Math.sin(theta);
+          y = r * Math.cos(phi) * 0.7;
+        } else {
+          const angle = branch + spin;
+          x = Math.cos(angle) * r + scatter;
+          z = Math.sin(angle) * r + scatter;
+          y = (Math.random() - 0.5) * thickness * (1 - r / radius * 0.7);
+        }
+        positions.set([x, y, z], i * 3);
+
+        const mix = Math.min(r / radius, 1);
+        const c = cIn.clone().lerp(cOut, mix);
+        if (Math.random() < 0.12) c.lerp(cWhite, 0.7); // occasional bright star
+        colors.set([c.r, c.g, c.b], i * 3);
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({
+        size,
+        map: sprite,
+        vertexColors: true,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true,
+        opacity: spread === 'disc' ? 1 : 0.65,
+      });
+      return { points: new THREE.Points(geo, mat) };
+    }
+
+    // --- Sizing --------------------------------------------------------------
+    // ResizeObserver fires once on observe(); setSize() with unchanged
+    // dimensions would still reset (and blank) the drawing buffer, so skip
+    // no-op resizes — critical for the static reduced-motion frame.
+    let lastW = 0;
+    let lastH = 0;
+    function resize() {
+      const w = stage!.clientWidth;
+      const h = stage!.clientHeight;
+      if (w === lastW && h === lastH) return;
+      lastW = w;
+      lastH = h;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(stage);
+
+    // --- Pointer parallax ----------------------------------------------------
+    let px = 0;
+    let py = 0;
+    if (!reducedMotion) {
+      window.addEventListener(
+        'pointermove',
+        (e) => {
+          px = (e.clientX / window.innerWidth) * 2 - 1;
+          py = (e.clientY / window.innerHeight) * 2 - 1;
+        },
+        { passive: true }
+      );
+    }
+
+    // --- Render loop (paused when hidden or scrolled away) -------------------
+    let visible = true;
+    let raf = 0;
+    const clock = new THREE.Clock();
+
+    function frame() {
+      raf = requestAnimationFrame(frame);
+      const t = clock.getElapsedTime();
+
+      galaxy.points.rotation.y = t * 0.05;
+      galaxy.points.rotation.x = Math.sin(t * 0.1) * 0.04;
+      nebula.points.rotation.y = t * 0.05;
+      nebula.points.rotation.x = galaxy.points.rotation.x;
+      bright.points.rotation.y = t * 0.05;
+      bright.points.rotation.x = galaxy.points.rotation.x;
+      dust.points.rotation.y = -t * 0.008;
+
+      camera.position.x += (px * 3.4 - camera.position.x) * 0.035;
+      camera.position.y += (10 - py * 2.1 - camera.position.y) * 0.035;
+      camera.lookAt(0, 7, 0);
+
+      renderer.render(scene, camera);
+    }
+
+    function setRunning(run: boolean) {
+      if (run && raf === 0) {
+        clock.getDelta(); // swallow accumulated time
+        raf = requestAnimationFrame(frame);
+      } else if (!run && raf !== 0) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    }
+
+    if (reducedMotion) {
+      // One static frame — no loop, no pointer reactions. Pose the galaxy so
+      // the frozen frame still has depth.
+      galaxy.points.rotation.y = 0.8;
+      nebula.points.rotation.y = 0.8;
+      bright.points.rotation.y = 0.8;
+      camera.lookAt(0, 7, 0);
+      renderer.render(scene, camera);
+      stage.dataset.heroReady = 'static';
+    } else {
+      const io = new IntersectionObserver(([entry]) => {
+        visible = entry?.isIntersecting ?? true;
+        setRunning(visible && !document.hidden);
+      });
+      io.observe(stage);
+      document.addEventListener('visibilitychange', () => setRunning(visible && !document.hidden));
+      setRunning(true);
+      stage.dataset.heroReady = 'loop';
+
+      // Fade the canvas out as the hero scrolls away
+      window.addEventListener(
+        'scroll',
+        () => {
+          const fade = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.9));
+          canvas!.style.opacity = String(fade);
+        },
+        { passive: true }
+      );
+    }
+  }
+</script>

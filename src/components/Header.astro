@@ -1,127 +1,155 @@
 ---
-import { nav, site } from '../lib/site.config';
+import { site, nav } from '../lib/site.config';
 import { u } from '../lib/urls';
-import Icon from './Icon.astro';
-
-/** Strip the configured base path so active-link matching works under /portfolio too. */
-const stripBase = (p: string) => {
-  const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
-  const without = base && p.startsWith(base) ? p.slice(base.length) : p;
-  return without.replace(/\/+$/, '') || '/';
-};
-
-const path = stripBase(Astro.url.pathname);
-const isActive = (href: string) => {
-  const target = stripBase(u(href).split('#')[0]);
-  return target === '/' ? path === '/' : path === target || path.startsWith(target + '/');
-};
-
-const initials = site.name
-  .split(/\s+/)
-  .filter(Boolean)
-  .map((w) => w[0])
-  .slice(0, 2)
-  .join('')
-  .toUpperCase();
 ---
 
-<header
-  id="site-header"
-  class="fixed top-0 inset-x-0 z-50 border-b border-line bg-bg/85 backdrop-blur-md transition-shadow"
-  data-scroll-shadow
->
+<header class="site-header" data-header>
   <div class="container-site flex h-16 items-center justify-between gap-4">
-    <a href={u('/')} class="group flex items-baseline gap-2" aria-label={`${site.name} — home`}>
-      <span class="font-display text-lg font-extrabold tracking-tight">{initials}</span>
-      <span class="hidden sm:block text-sm text-muted group-hover:text-fg transition-colors">
-        <span class="font-arabic" lang="ar" dir="rtl">محمود كامل</span>
+    <!-- Brand -->
+    <a href={u('/#top')} class="group flex items-center gap-3" aria-label={`${site.name} — home`}>
+      <span
+        class="grid size-9 place-items-center rounded-xl border border-line bg-panel font-display text-sm font-bold text-gradient"
+        aria-hidden="true">MK</span>
+      <span class="hidden flex-col leading-tight sm:flex">
+        <span class="font-display text-sm font-semibold">{site.name}</span>
+        <span class="text-xs text-muted">{site.title}</span>
       </span>
     </a>
 
-    <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
-      {
-        nav.map((item) => (
-          <a
-            href={u(item.href)}
-            class:list={[
-              'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-              isActive(item.href) ? 'text-accent' : 'text-muted hover:text-fg',
-            ]}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        ))
-      }
+    <!-- Desktop nav -->
+    <nav class="hidden items-center gap-6 md:flex" aria-label="Primary">
+      {nav.map((item) => (
+        <a href={u(item.href)} class="nav-link" data-nav-link data-target={item.href.replace('/#', '#')}>
+          {item.label}
+        </a>
+      ))}
+      <a href={`mailto:${site.email}`} class="btn btn-primary !px-4 !py-2 text-sm">Hire me</a>
     </nav>
 
-    <div class="flex items-center gap-1">
-      <button
-        type="button"
-        data-theme-toggle
-        class="btn btn-ghost px-2.5 py-2.5"
-        aria-label="Toggle light / dark theme"
-      >
-        <Icon name="sun" class="h-5 w-5 dark:hidden" />
-        <Icon name="moon" class="hidden h-5 w-5 dark:block" />
-      </button>
-
-      <button
-        type="button"
-        class="btn btn-ghost px-2.5 py-2.5 md:hidden"
-        aria-label="Open menu"
-        aria-expanded="false"
-        aria-controls="mobile-menu"
-        data-menu-open
-      >
-        <Icon name="menu" class="h-5 w-5" />
-      </button>
-    </div>
+    <!-- Mobile toggle -->
+    <button
+      type="button"
+      class="grid size-10 place-items-center rounded-lg border border-line bg-panel md:hidden"
+      data-menu-open
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Open menu"
+    >
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="none" aria-hidden="true">
+        <path d="M1 1h16M1 7h16M1 13h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+      </svg>
+    </button>
   </div>
 
   <!-- Mobile drawer -->
-  <div
-    id="mobile-menu"
-    class="invisible fixed inset-0 z-50 overflow-hidden md:hidden"
-    data-menu-panel
-    aria-hidden="true"
-  >
-    <div class="absolute inset-0 bg-black/50 opacity-0 transition-opacity" data-menu-overlay></div>
-    <nav
-      class="absolute top-0 right-0 h-full w-72 max-w-[85%] translate-x-full border-l border-line bg-surface p-6 shadow-2xl transition-transform duration-200"
-      aria-label="Mobile navigation"
+  <div id="mobile-menu" class="menu-panel md:!hidden" data-menu-panel aria-hidden="true">
+    <div class="absolute inset-0 bg-void/80 backdrop-blur-sm" data-menu-overlay></div>
+    <div
+      class="absolute inset-y-0 end-0 flex w-72 max-w-[85vw] flex-col border-s border-line bg-deep p-6 transition-transform duration-300 translate-x-full"
       data-menu-content
     >
-      <div class="mb-6 flex items-center justify-between">
-        <span class="font-arabic text-sm text-muted" lang="ar" dir="rtl">القائمة</span>
-        <button type="button" class="btn btn-ghost px-2.5 py-2.5" aria-label="Close menu" data-menu-close>
-          <Icon name="x" class="h-5 w-5" />
+      <div class="flex items-center justify-between">
+        <span class="font-arabic text-lg text-cyan" lang="ar" aria-hidden="true">{site.nameAr}</span>
+        <button
+          type="button"
+          class="grid size-10 place-items-center rounded-lg border border-line"
+          data-menu-close
+          aria-label="Close menu"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+          </svg>
         </button>
       </div>
-      <ul class="space-y-1">
-        {
-          nav.map((item) => (
-            <li>
-              <a
-                href={u(item.href)}
-                class:list={[
-                  'block rounded-md px-4 py-3 text-base font-medium',
-                  isActive(item.href) ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-surface-2 hover:text-fg',
-                ]}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-                data-menu-link
-              >
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-      <div class="mt-8 border-t border-line pt-6">
-        <a href={`mailto:${site.email}`} class="flex items-center gap-2 px-4 py-2 text-sm text-muted">
-          <Icon name="mail" class="h-4 w-4" /> {site.email}
-        </a>
-      </div>
-    </nav>
+      <nav class="mt-8 flex flex-col gap-1" aria-label="Mobile">
+        {nav.map((item) => (
+          <a
+            href={u(item.href)}
+            class="rounded-lg px-3 py-3 text-lg font-medium text-muted transition-colors hover:bg-panel hover:text-ink"
+            data-menu-link
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      <a href={`mailto:${site.email}`} class="btn btn-primary mt-auto justify-center" data-menu-link>Hire me</a>
+    </div>
   </div>
 </header>
+
+<script>
+  // Scrolled state — glass backdrop
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 10);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Mobile drawer
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const content = panel?.querySelector<HTMLElement>('[data-menu-content]');
+  const overlay = panel?.querySelector<HTMLElement>('[data-menu-overlay]');
+
+  function setMenu(open: boolean) {
+    if (!panel || !openBtn || !content || !overlay) return;
+    panel.setAttribute('aria-hidden', String(!open));
+    panel.classList.toggle('is-open', open);
+    openBtn.setAttribute('aria-expanded', String(open));
+    content.classList.toggle('translate-x-full', !open);
+    overlay.classList.toggle('opacity-0', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      // Focus after a frame: guaranteed post-style-recalc.
+      requestAnimationFrame(() => {
+        panel?.querySelector<HTMLElement>('a, button')?.focus();
+      });
+    } else {
+      openBtn.focus();
+    }
+  }
+
+  openBtn?.addEventListener('click', () => setMenu(true));
+  panel?.querySelector('[data-menu-close]')?.addEventListener('click', () => setMenu(false));
+  overlay?.addEventListener('click', () => setMenu(false));
+  panel?.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel?.getAttribute('aria-hidden') === 'false') setMenu(false);
+  });
+
+  // Scroll-spy — highlight the nav link of the section crossing the viewport's
+  // focus band. Computed on scroll (rAF-throttled) rather than IntersectionObserver:
+  // sections taller than the band never change intersection state, which would
+  // leave a stale highlight while scrolling inside them.
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
+  const sections = links
+    .map((l) => document.querySelector<HTMLElement>(l.dataset.target ?? ''))
+    .filter((s): s is HTMLElement => s !== null);
+
+  if (sections.length > 0) {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const band = window.innerHeight * 0.45;
+      let activeId: string | null = null;
+      for (const s of sections) {
+        const r = s.getBoundingClientRect();
+        if (r.top <= band && r.bottom > band) {
+          activeId = s.id;
+          break;
+        }
+      }
+      for (const l of links) {
+        l.setAttribute('aria-current', String(l.dataset.target === `#${activeId}`));
+      }
+    };
+    const onScrollSpy = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScrollSpy, { passive: true });
+    window.addEventListener('resize', onScrollSpy, { passive: true });
+    update();
+  }
+</script>
